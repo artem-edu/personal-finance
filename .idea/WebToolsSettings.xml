@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="WebToolsSettings">
+    <option name="autoDetectRun" value="true" />
+    <option name="runtimePath" value="$USER_HOME$/.local/share/fnm/node-versions/v22.23.2/installation/bin/node" />
+  </component>
+</project>
