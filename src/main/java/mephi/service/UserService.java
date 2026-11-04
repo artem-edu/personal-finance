@@ -5,7 +5,9 @@ import mephi.dto.request.RegistrationRequest;
 import mephi.exception.AuthenticationException;
 import mephi.exception.UserAlreadyExistsException;
 import mephi.model.User;
+import mephi.model.Wallet;
 import mephi.repository.UserRepository;
+import mephi.repository.WalletRepository;
 import mephi.util.PasswordEncoder;
 import mephi.util.SessionManager;
 
@@ -14,14 +16,16 @@ import java.util.UUID;
 
 public class UserService {
     private final UserRepository userRepository;
+    private final WalletRepository walletRepository;
     private final SessionManager sessionManager;
 
-    public UserService(UserRepository userRepository, SessionManager sessionManager) {
+    public UserService(UserRepository userRepository, WalletRepository walletRepository, SessionManager sessionManager) {
         this.userRepository = userRepository;
+        this.walletRepository = walletRepository;
         this.sessionManager = sessionManager;
     }
 
-    public User create(RegistrationRequest dto) {
+    public User register(RegistrationRequest dto) {
         // todo: валидация данных
 
         if (existLogin(dto.login())) {
@@ -29,10 +33,13 @@ public class UserService {
         }
 
         String hashPassword = PasswordEncoder.encode(dto.password());
-        User newUser = new User(dto.login(), hashPassword);
-        userRepository.create(newUser);
+        User user = new User(dto.login(), hashPassword);
+        userRepository.create(user);
 
-        return newUser;
+        Wallet wallet = new Wallet(user.getId());
+        walletRepository.save(wallet);
+
+        return user;
     }
 
     public UUID login(LoginRequest dto) {

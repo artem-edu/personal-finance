@@ -1,6 +1,6 @@
 package mephi.exception;
 
-public class UserAlreadyExistsException extends RuntimeException {
+public class UserAlreadyExistsException extends PersonalFinanceException {
     public UserAlreadyExistsException(String message) {
         super(message);
     }

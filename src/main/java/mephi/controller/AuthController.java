@@ -2,6 +2,7 @@ package mephi.controller;
 
 import mephi.dto.request.LoginRequest;
 import mephi.dto.request.RegistrationRequest;
+import mephi.exception.PersonalFinanceException;
 import mephi.service.UserService;
 import mephi.util.ConsoleReader;
 
@@ -43,7 +44,7 @@ public class AuthController {
             System.out.println("Добро пожаловать, " + login);
 
             return token;
-        } catch (RuntimeException e) {
+        } catch (PersonalFinanceException e) {
             System.out.println("Ошибка: " + e.getMessage());
             return null;
         }
@@ -54,9 +55,9 @@ public class AuthController {
         String password = ConsoleReader.readString("Пароль: ");
 
         try {
-            userService.create(new RegistrationRequest(login, password));
+            userService.register(new RegistrationRequest(login, password));
             System.out.println("Пользователь создан. Теперь войдите.");
-        } catch (RuntimeException e) {
+        } catch (PersonalFinanceException e) {
             System.out.println("Ошибка: " + e.getMessage());
         }
     }

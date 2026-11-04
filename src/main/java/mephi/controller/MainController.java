@@ -1,6 +1,7 @@
 package mephi.controller;
 
 import mephi.config.AppConfig;
+import mephi.exception.PersonalFinanceException;
 import mephi.util.ConsoleReader;
 
 import java.util.UUID;
@@ -39,8 +40,11 @@ public class MainController {
 
             try {
                 switch (ConsoleReader.readInt()) {
-                    case 1, 2, 3, 4, 5 ->
-                            System.out.println("Раздел ещё не реализован.");
+                    case 1 -> new WalletController(
+                            config.getWalletService(),
+                            config.getSessionManager()
+                    ).run(token);
+                    case 2, 3, 4, 5 -> System.out.println("Раздел ещё не реализован.");
                     case 9 -> {
                         config.getUserService().logout(token);
                         System.out.println("Вы вышли из аккаунта.");
@@ -50,7 +54,7 @@ public class MainController {
                     case 0 -> running = false;
                     default -> System.out.println("Неизвестная команда");
                 }
-            } catch (RuntimeException e) {
+            } catch (PersonalFinanceException e) {
                 System.out.println("Ошибка: " + e.getMessage());
             }
         }
