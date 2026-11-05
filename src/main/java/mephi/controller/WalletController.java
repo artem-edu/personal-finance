@@ -1,8 +1,9 @@
 package mephi.controller;
 
+import mephi.model.User;
+import mephi.service.UserService;
 import mephi.service.WalletService;
 import mephi.core.Controller;
-import mephi.util.SessionManager;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -10,11 +11,11 @@ import java.util.UUID;
 
 public class WalletController implements Controller {
     private final WalletService walletService;
-    private final SessionManager sessionManager;
+    private final UserService userService;
 
-    public WalletController(WalletService walletService, SessionManager sessionManager) {
+    public WalletController(WalletService walletService, UserService userService) {
         this.walletService = walletService;
-        this.sessionManager = sessionManager;
+        this.userService = userService;
     }
 
     @Override
@@ -25,7 +26,7 @@ public class WalletController implements Controller {
 
     @Override
     public void handleCommand(List<String> args) {
-        UUID userId = sessionManager.getUserId();
+        User user = userService.geCurrenttUser();
         if (args.isEmpty()) {
             help();
             return;
@@ -36,7 +37,7 @@ public class WalletController implements Controller {
                 help();
             }
             case "balance" -> {
-                showBalance(userId);
+                showBalance(user.getId());
             }
             default -> {
                 System.out.println("Команда не найдена, вывод справка wallet help");

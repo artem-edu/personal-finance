@@ -25,8 +25,15 @@ public class ConsoleReader {
     }
 
     public static String readString(String prompt) {
-        System.out.print(prompt);
+        System.out.print(prompt + ": ");
         return scanner.nextLine().trim();
+    }
+
+    public static Boolean readBoolean(String prompt) {
+        System.out.print(prompt + "(д/н): ");
+        String input = scanner.nextLine().trim().toLowerCase();
+
+        return input.startsWith("д") || input.startsWith("y");
     }
 
     private static List<String> parser(String line) {

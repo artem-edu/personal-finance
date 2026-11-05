@@ -3,6 +3,7 @@ package mephi.service;
 import mephi.dto.request.LoginRequest;
 import mephi.dto.request.RegistrationRequest;
 import mephi.exception.AuthenticationException;
+import mephi.exception.PersonalFinanceException;
 import mephi.exception.UserAlreadyExistsException;
 import mephi.model.User;
 import mephi.model.Wallet;
@@ -68,6 +69,12 @@ public class UserService {
 
     public boolean isLogged() {
         return sessionManager.isLogged();
+    }
+
+    public User geCurrenttUser() {
+        UUID userId = sessionManager.getUserId();
+
+        return userRepository.findById(userId).orElseThrow(() -> new PersonalFinanceException("Пользователь не найден"));
     }
 
     private boolean existLogin(String login) {
