@@ -6,6 +6,7 @@ import mephi.exception.AuthenticationException;
 import mephi.exception.UserAlreadyExistsException;
 import mephi.model.User;
 import mephi.model.Wallet;
+import mephi.repository.CategoryRepository;
 import mephi.repository.UserRepository;
 import mephi.repository.WalletRepository;
 import mephi.util.PasswordEncoder;
@@ -17,11 +18,18 @@ import java.util.UUID;
 public class UserService {
     private final UserRepository userRepository;
     private final WalletRepository walletRepository;
+    private final CategoryRepository categoryRepository;
     private final SessionManager sessionManager;
 
-    public UserService(UserRepository userRepository, WalletRepository walletRepository, SessionManager sessionManager) {
+    public UserService(
+            UserRepository userRepository,
+            WalletRepository walletRepository,
+            CategoryRepository categoryRepository,
+            SessionManager sessionManager
+    ) {
         this.userRepository = userRepository;
         this.walletRepository = walletRepository;
+        this.categoryRepository = categoryRepository;
         this.sessionManager = sessionManager;
     }
 
@@ -54,8 +62,12 @@ public class UserService {
         return sessionManager.createSession(user.get().getId());
     }
 
-    public void logout(UUID token) {
-        sessionManager.logout(token);
+    public void logout() {
+        sessionManager.logout();
+    }
+
+    public boolean isLogged() {
+        return sessionManager.isLogged();
     }
 
     private boolean existLogin(String login) {

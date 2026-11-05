@@ -1,13 +1,14 @@
 package mephi.controller;
 
 import mephi.service.WalletService;
-import mephi.util.ConsoleReader;
+import mephi.core.Controller;
 import mephi.util.SessionManager;
 
 import java.math.BigDecimal;
+import java.util.List;
 import java.util.UUID;
 
-public class WalletController {
+public class WalletController implements Controller {
     private final WalletService walletService;
     private final SessionManager sessionManager;
 
@@ -16,22 +17,29 @@ public class WalletController {
         this.sessionManager = sessionManager;
     }
 
-    public void run(UUID token) {
-        UUID userId = sessionManager.getUserId(token);
-        while (true) {
-            System.out.println("\n===Кошелек===");
-            System.out.println("1) Баланс");
-            System.out.println("0) Назад");
-            System.out.print("> ");
+    @Override
+    public void help() {
+        System.out.println("\n===Справка===");
+        System.out.println("wallet balance - показать баланс");
+    }
 
-            switch (ConsoleReader.readInt()) {
-                case 1 -> {
-                    showBalance(userId);
-                }
-                case 0 -> {
-                    return;
-                }
-                default -> System.out.println("Неизвестная команда");
+    @Override
+    public void handleCommand(List<String> args) {
+        UUID userId = sessionManager.getUserId();
+        if (args.isEmpty()) {
+            help();
+            return;
+        }
+        String action = args.getFirst();
+        switch (action) {
+            case "help" -> {
+                help();
+            }
+            case "balance" -> {
+                showBalance(userId);
+            }
+            default -> {
+                System.out.println("Команда не найдена, вывод справка wallet help");
             }
         }
     }

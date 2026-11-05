@@ -1,0 +1,29 @@
+package mephi.core;
+
+import mephi.exception.PersonalFinanceException;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+public class Router {
+    private final Map<String, Controller> routes = new HashMap<>();
+
+    public void register(String route, Controller controller) {
+        routes.put(route.toLowerCase(), controller);
+    }
+
+    public void route(List<String> tokens) {
+        if (tokens.isEmpty()) return;
+
+        String routeName = tokens.getFirst().toLowerCase();
+        Controller controller = routes.get(routeName);
+
+        if (controller == null) {
+            throw new PersonalFinanceException("Маршрут не найден!");
+        }
+
+        List<String> args = tokens.subList(1, tokens.size());
+        controller.handleCommand(args);
+    }
+}
