@@ -24,7 +24,7 @@ public class CategoryService {
         Wallet wallet = walletRepository.findByUserId(dto.userId())
                 .orElseThrow(() -> new PersonalFinanceException("Кошелек не найден"));
 
-        Category category = new Category(dto.name(), wallet.getId(), dto.isDepositOnly());
+        Category category = new Category(dto.name(), wallet.getId(), dto.budget(), dto.isDepositOnly());
         categoryRepository.save(category);
     }
 

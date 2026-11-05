@@ -14,12 +14,13 @@ public class ConsoleReader {
         return parser(line);
     }
 
-    public static int readInt() {
+    public static int readInt(String prompt) {
+        System.out.print(prompt + ": ");
         while (true) {
             try {
                 return Integer.parseInt(scanner.nextLine().trim());
             } catch (NumberFormatException e) {
-                System.out.print("Введите число: ");
+                System.out.print(prompt + ": ");
             }
         }
     }

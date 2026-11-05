@@ -8,6 +8,7 @@ import mephi.service.CategoryService;
 import mephi.service.UserService;
 import mephi.util.ConsoleReader;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 public class CategoryController implements Controller {
@@ -51,8 +52,13 @@ public class CategoryController implements Controller {
         System.out.println("\n=== Создание категории ===");
         String name = ConsoleReader.readString("Название");
         boolean isDepositOnly = ConsoleReader.readBoolean("Режим только пополнения?");
-        categoryService.create(new CreateCategory(name, user.getId(), isDepositOnly));
-        System.out.println(name + isDepositOnly);
+        BigDecimal budget = BigDecimal.ZERO;
+
+        if (!isDepositOnly) {
+            int budgetValue = ConsoleReader.readInt("Бюджет");
+            budget = BigDecimal.valueOf(budgetValue);
+        }
+        categoryService.create(new CreateCategory(name, user.getId(), budget, isDepositOnly));
     }
 
     private void list() {
@@ -60,14 +66,20 @@ public class CategoryController implements Controller {
         System.out.println("\n=== Список категорий ===");
 
         List<Category> categories = categoryService.getCategoriesByUserId(user.getId());
-        String headerFormat = "| %-15s | %-5s |%n";
-        String rowFormat = "| %-15s | %-5s |%n";
-        System.out.printf(headerFormat, "Имя", "Только для пополнения");
+        String headerFormat = "| %-18s | %-18s | %-18s |%n";
+        String rowFormat = "| %-18s | %-18s | %-18s |%n";
+        System.out.printf(headerFormat, "Имя", "Бюджет", "Только пополнение");
 
-        System.out.println("+------+-----------------+---------------------------+");
+        System.out.println("+------------------+------------------+------------------+");
         categories.forEach(category -> {
-            System.out.printf(rowFormat, category.getName(), category.getIsDepositOnly());
+            String budgetWithCurrency = String.format("%,.2f руб.", category.getBudget());
+            System.out.printf(
+                    rowFormat,
+                    category.getName(),
+                    category.getIsDepositOnly() ? "-" : budgetWithCurrency,
+                    category.getIsDepositOnly() ? "Да" : "Нет"
+            );
         });
-        System.out.println("+------+-----------------+---------------------------+");
+        System.out.println("+------------------+------------------+------------------+");
     }
 }

@@ -62,7 +62,7 @@ public class CategoryRepository {
         }
 
         try (FileReader reader = new FileReader(file)) {
-            Type mapType = new TypeToken<ConcurrentHashMap<UUID, User>>() {
+            Type mapType = new TypeToken<ConcurrentHashMap<UUID, Category>>() {
             }.getType();
 
             Map<UUID, Category> loadedCategories = gson.fromJson(reader, mapType);

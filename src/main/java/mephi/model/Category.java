@@ -1,25 +1,29 @@
 package mephi.model;
 
 
+import java.math.BigDecimal;
 import java.util.UUID;
 
 public class Category {
     private final UUID id;
     private final String name;
     private final UUID walletId;
+    private final BigDecimal budget;
     private final boolean isDepositOnly;
 
-    public Category(String name, UUID walletId, boolean isDepositOnly) {
+    public Category(String name, UUID walletId, BigDecimal budget, boolean isDepositOnly) {
         this.id = UUID.randomUUID();
         this.name = name;
         this.walletId = walletId;
+        this.budget = budget;
         this.isDepositOnly = isDepositOnly;
     }
 
-    private Category(UUID id, String name, UUID walletId, boolean isDepositOnly) {
+    private Category(UUID id, String name, UUID walletId, BigDecimal budget, boolean isDepositOnly) {
         this.id = id;
         this.name = name;
         this.walletId = walletId;
+        this.budget = budget;
         this.isDepositOnly = isDepositOnly;
     }
 
@@ -33,6 +37,10 @@ public class Category {
 
     public UUID getWalletId() {
         return walletId;
+    }
+
+    public BigDecimal getBudget() {
+        return budget;
     }
 
     public boolean getIsDepositOnly() {
