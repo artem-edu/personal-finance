@@ -33,6 +33,13 @@ public class CategoryRepository {
         return Optional.ofNullable(categories.get(id));
     }
 
+    public Optional<Category> findByWalletAndName(UUID walletId, String name) {
+        return findByWallet(walletId)
+                .stream()
+                .filter(c -> c.getName().equalsIgnoreCase(name.trim()))
+                .findFirst();
+    }
+
     public List<Category> findByWallet(UUID walletId) {
         if (walletId == null) return List.of();
 

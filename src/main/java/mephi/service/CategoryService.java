@@ -28,6 +28,15 @@ public class CategoryService {
         categoryRepository.save(category);
     }
 
+    public Category getCategoriesByUserAndName(UUID userId, String name) {
+        Wallet wallet = walletRepository.findByUserId(userId)
+                .orElseThrow(() -> new PersonalFinanceException("Кошелек не найден"));
+
+        Category category = categoryRepository.findByWalletAndName(wallet.getId(), name)
+                .orElseThrow(() -> new PersonalFinanceException("Категория не найдена"));
+        return category;
+    }
+
     public List<Category> getCategoriesByUserId(UUID userId) {
         Wallet wallet = walletRepository.findByUserId(userId)
                 .orElseThrow(() -> new PersonalFinanceException("Кошелек не найден"));

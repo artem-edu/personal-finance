@@ -77,6 +77,14 @@ public class UserService {
         return userRepository.findById(userId).orElseThrow(() -> new PersonalFinanceException("Пользователь не найден"));
     }
 
+    public Wallet getWallet() {
+        UUID userId = sessionManager.getUserId();
+        Wallet wallet = walletRepository.findByUserId(userId)
+                .orElseThrow(() -> new PersonalFinanceException("Кошелек не найден"));
+
+        return wallet;
+    }
+
     private boolean existLogin(String login) {
         Optional<User> user = userRepository.findByLogin(login);
 

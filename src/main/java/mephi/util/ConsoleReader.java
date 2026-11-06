@@ -24,6 +24,21 @@ public class ConsoleReader {
             }
         }
     }
+    public static int readInt(String prompt, int min, int max) {
+        System.out.print(prompt + ": ");
+        while (true) {
+            try {
+                int input = Integer.parseInt(scanner.nextLine().trim());
+                if (input >= min && input <= max) {
+                    return input;
+                }
+                System.out.printf("Ошибка: число должно быть от %d до %d\n", min, max);
+            } catch (NumberFormatException e) {
+                System.out.print(prompt + ": ");
+            }
+        }
+    }
+
 
     public static String readString(String prompt) {
         System.out.print(prompt + ": ");
