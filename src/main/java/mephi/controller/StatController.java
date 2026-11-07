@@ -1,11 +1,12 @@
 package mephi.controller;
 
+import com.github.freva.asciitable.AsciiTable;
 import mephi.core.Controller;
 import mephi.model.StatFull;
 import mephi.model.StatShort;
 import mephi.service.StatService;
 
-import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 
 public class StatController implements Controller {
@@ -45,7 +46,6 @@ public class StatController implements Controller {
 
     private void showShort() {
         StatShort statShort = statService.getShort();
-
         System.out.printf("Доходы: %,.2f руб.\n", statShort.stat().income());
         System.out.printf("Расходы: %,.2f руб.\n", statShort.stat().expenses());
         System.out.printf("Текущий баланс: %,.2f руб.\n", statShort.currentBalance());
@@ -53,26 +53,34 @@ public class StatController implements Controller {
 
     private void showFull() {
         StatFull statFull = statService.getFull();
+        String[] categoriesHeaders = {"Категория", "Бюджет", "Только для пополнение", "Доход", "Расход", "Транзакции"};
+        String[] transactionsHeader = {"Операция", "Сумма"};
+        List<String[]> categoriesRows = new ArrayList<>();
+
         statFull.stats().forEach(s -> {
-            System.out.printf(
-                    "Категория: %s.; Бюджет: %,.2f; Только пополнение: %b; Доход: %,.2f; Расход: %,.2f\n",
+            String renderedInnerTable = "-";
+            if (!s.transactions().isEmpty()) {
+                List<String[]> transactionsRows = new ArrayList<>();
+                s.transactions().forEach(t -> {
+                    transactionsRows.add(new String[]{
+                            t.getType().getMessage(),
+                            String.format("%,.2f руб", t.getAmount())
+                    });
+                });
+                renderedInnerTable = AsciiTable.getTable(transactionsHeader, transactionsRows.toArray(new String[0][0]));
+            }
+
+            categoriesRows.add(new String[]{
                     s.category().getName(),
-                    s.category().getBudget(),
-                    s.category().getIsDepositOnly(),
-                    s.stat().income(),
-                    s.stat().expenses()
-            );
-            s.transactions().forEach(t -> {
-                System.out.printf(
-                        "%10s Тип: %s.; Сумма: %,.2f;\n",
-                        "",
-                        t.getType().getMessage(),
-                        t.getAmount()
-                );
+                    String.format("%,.2f руб.", s.category().getBudget()),
+                    s.category().getIsDepositOnly() ? "да" : "нет",
+                    String.format("%,.2f руб.", s.stat().income()),
+                    s.category().getIsDepositOnly() ? "-" : String.format("%,.2f", s.stat().expenses()),
+                    renderedInnerTable
             });
         });
-        System.out.printf("Доходы: %,.2f руб.\n", statFull.income());
-        System.out.printf("Расходы: %,.2f руб.\n", statFull.expenses());
-        System.out.printf("Текущий баланс: %,.2f руб.\n", statFull.currentBalance());
+
+        System.out.println(AsciiTable.getTable(categoriesHeaders, categoriesRows.toArray(new String[0][0])));
+        showShort();
     }
 }

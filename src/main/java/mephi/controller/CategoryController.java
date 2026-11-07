@@ -1,5 +1,6 @@
 package mephi.controller;
 
+import com.github.freva.asciitable.AsciiTable;
 import mephi.core.Controller;
 import mephi.dto.request.CreateCategory;
 import mephi.model.Category;
@@ -9,6 +10,7 @@ import mephi.service.UserService;
 import mephi.util.ConsoleReader;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 
 public class CategoryController implements Controller {
@@ -64,22 +66,18 @@ public class CategoryController implements Controller {
     private void list() {
         User user = userService.getCurrentUser();
         System.out.println("\n=== Список категорий ===");
-
+        String[] tableHeaders = {"Имя", "Бюджет", "Только пополнение"};
+        List<String[]> tableRows = new ArrayList<>();
         List<Category> categories = categoryService.getCategoriesByUserId(user.getId());
-        String headerFormat = "| %-18s | %-18s | %-18s |%n";
-        String rowFormat = "| %-18s | %-18s | %-18s |%n";
-        System.out.printf(headerFormat, "Имя", "Бюджет", "Только пополнение");
 
-        System.out.println("+------------------+------------------+------------------+");
         categories.forEach(category -> {
             String budgetWithCurrency = String.format("%,.2f руб.", category.getBudget());
-            System.out.printf(
-                    rowFormat,
+            tableRows.add(new String[] {
                     category.getName(),
                     category.getIsDepositOnly() ? "-" : budgetWithCurrency,
                     category.getIsDepositOnly() ? "Да" : "Нет"
-            );
+            });
         });
-        System.out.println("+------------------+------------------+------------------+");
+        System.out.println(AsciiTable.getTable(tableHeaders, tableRows.toArray(new String[0][0])));
     }
 }
