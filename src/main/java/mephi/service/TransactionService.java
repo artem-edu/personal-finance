@@ -42,4 +42,13 @@ public class TransactionService {
     public List<Transaction> getTransactionsByWalletId(UUID walletId) {
         return transactionRepository.findByWalletId(walletId);
     }
+
+    public List<Transaction> getByCategoryId(UUID categoryId) {
+        return transactionRepository.findByCategoryId(categoryId);
+    }
+
+    public Transaction getTransactionById(UUID id) {
+        return transactionRepository.findById(id)
+                .orElseThrow(() -> new PersonalFinanceException("Транзакция не найдена"));
+    }
 }

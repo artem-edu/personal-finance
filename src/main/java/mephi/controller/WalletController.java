@@ -26,7 +26,7 @@ public class WalletController implements Controller {
 
     @Override
     public void handleCommand(List<String> args) {
-        User user = userService.geCurrenttUser();
+        User user = userService.getCurrentUser();
         if (args.isEmpty()) {
             help();
             return;

@@ -104,24 +104,24 @@ class UserServiceTest {
     }
 
     @Test
-    void geCurrenttUser_Success() {
+    void getCurrentUser_Success() {
         UUID userId = UUID.randomUUID();
         User user = new User("login", "hash");
         when(sessionManager.getUserId()).thenReturn(userId);
         when(userRepository.findById(userId)).thenReturn(Optional.of(user));
 
-        User result = userService.geCurrenttUser();
+        User result = userService.getCurrentUser();
 
         assertEquals(user, result);
     }
 
     @Test
-    void geCurrenttUser_ThrowsPersonalFinanceException() {
+    void getCurrentUser_ThrowsPersonalFinanceException() {
         UUID userId = UUID.randomUUID();
         when(sessionManager.getUserId()).thenReturn(userId);
         when(userRepository.findById(userId)).thenReturn(Optional.empty());
 
-        assertThrows(PersonalFinanceException.class, () -> userService.geCurrenttUser());
+        assertThrows(PersonalFinanceException.class, () -> userService.getCurrentUser());
     }
 
     @Test

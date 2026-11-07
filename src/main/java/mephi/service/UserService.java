@@ -43,9 +43,9 @@ public class UserService {
 
         String hashPassword = PasswordEncoder.encode(dto.password());
         User user = new User(dto.login(), hashPassword);
-        userRepository.create(user);
-
         Wallet wallet = new Wallet(user.getId());
+
+        userRepository.create(user);
         walletRepository.save(wallet);
 
         return user;
@@ -71,10 +71,13 @@ public class UserService {
         return sessionManager.isLogged();
     }
 
-    public User geCurrenttUser() {
+    public User getCurrentUser() {
         UUID userId = sessionManager.getUserId();
 
-        return userRepository.findById(userId).orElseThrow(() -> new PersonalFinanceException("Пользователь не найден"));
+        return userRepository.findById(userId).orElseThrow(() -> {
+            sessionManager.logout();
+            return new PersonalFinanceException("Требуется авторизация");
+        });
     }
 
     public Wallet getWallet() {

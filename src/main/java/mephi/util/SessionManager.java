@@ -37,6 +37,7 @@ public final class SessionManager {
     public void logout() {
         if (currentSession != null) {
             sessions.remove(currentSession);
+            currentSession = null;
         }
     }
 }

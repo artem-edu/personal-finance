@@ -48,7 +48,7 @@ public class CategoryController implements Controller {
     }
 
     private void create() {
-        User user = userService.geCurrenttUser();
+        User user = userService.getCurrentUser();
         System.out.println("\n=== Создание категории ===");
         String name = ConsoleReader.readString("Название");
         boolean isDepositOnly = ConsoleReader.readBoolean("Режим только пополнения?");
@@ -62,7 +62,7 @@ public class CategoryController implements Controller {
     }
 
     private void list() {
-        User user = userService.geCurrenttUser();
+        User user = userService.getCurrentUser();
         System.out.println("\n=== Список категорий ===");
 
         List<Category> categories = categoryService.getCategoriesByUserId(user.getId());

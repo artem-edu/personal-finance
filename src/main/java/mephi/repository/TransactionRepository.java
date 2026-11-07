@@ -29,9 +29,17 @@ public class TransactionRepository extends FileRepository<UUID, Transaction> {
     }
 
     public List<Transaction> findByWalletId(UUID walletId) {
-        if (walletId == null) return List.of();
+        return data.values()
+                .stream()
+                .filter(t -> t.getWalletId().equals(walletId))
+                .collect(Collectors.toList());
+    }
 
-        return data.values().stream().filter(t -> t.getWalletId().equals(walletId)).collect(Collectors.toList());
+    public List<Transaction> findByCategoryId(UUID categoryId) {
+        return data.values()
+                .stream()
+                .filter(t -> t.getCategoryId().equals(categoryId))
+                .collect(Collectors.toList());
     }
 
     public List<Transaction> findAll() {

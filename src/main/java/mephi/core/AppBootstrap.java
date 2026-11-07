@@ -24,7 +24,8 @@ public class AppBootstrap {
                 UserService.class,
                 WalletService.class,
                 CategoryService.class,
-                TransactionService.class
+                TransactionService.class,
+                StatService.class
         );
 
         // регистрация контроллеров
@@ -33,7 +34,8 @@ public class AppBootstrap {
                 WalletController.class,
                 HelpController.class,
                 CategoryController.class,
-                TransactionController.class
+                TransactionController.class,
+                StatController.class
         );
 
         Router router = new Router();
@@ -43,6 +45,7 @@ public class AppBootstrap {
         router.register("wallet", container.get(WalletController.class));
         router.register("category", container.get(CategoryController.class));
         router.register("transaction", container.get(TransactionController.class));
+        router.register("stat", container.get(StatController.class));
 
         return router;
     }
