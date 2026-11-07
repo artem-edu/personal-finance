@@ -4,7 +4,7 @@ public enum TransactionType {
     WITHDRAWAL("Списание"),
     DEPOSIT("Пополнение");
 
-    private String message;
+    private final String message;
     private static final TransactionType[] VALUES = values();
 
     TransactionType(String message) {

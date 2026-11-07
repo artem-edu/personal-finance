@@ -41,7 +41,7 @@ public class TransactionController implements Controller {
             return;
         }
 
-        String action = args.getFirst();
+        String action = args.get(0);
         switch (action) {
             case "help" -> {
                 help();

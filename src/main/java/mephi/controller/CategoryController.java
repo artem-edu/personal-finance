@@ -32,7 +32,7 @@ public class CategoryController implements Controller {
             help();
             return;
         }
-        String action = args.getFirst();
+        String action = args.get(0);
 
         switch (action) {
             case "help" -> {

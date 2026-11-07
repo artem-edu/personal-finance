@@ -16,7 +16,7 @@ public class Router {
     public void route(List<String> tokens) {
         if (tokens.isEmpty()) return;
 
-        String routeName = tokens.getFirst().toLowerCase();
+        String routeName = tokens.get(0).toLowerCase();
         Controller controller = routes.get(routeName);
 
         if (controller == null) {

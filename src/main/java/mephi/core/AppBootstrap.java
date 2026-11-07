@@ -1,14 +1,8 @@
 package mephi.core;
 
 import mephi.controller.*;
-import mephi.repository.CategoryRepository;
-import mephi.repository.TransactionRepository;
-import mephi.repository.UserRepository;
-import mephi.repository.WalletRepository;
-import mephi.service.CategoryService;
-import mephi.service.TransactionService;
-import mephi.service.UserService;
-import mephi.service.WalletService;
+import mephi.repository.*;
+import mephi.service.*;
 import mephi.util.SessionManager;
 
 public class AppBootstrap {

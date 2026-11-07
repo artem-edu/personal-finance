@@ -12,7 +12,7 @@ public class Main {
         Router router = AppBootstrap.bootstrap();
         while (true) {
             List<String> tokens = ConsoleReader.readCommand("> ");
-            if (tokens.getFirst().equals("exit")) {
+            if (tokens.get(0).equals("exit")) {
                 return;
             }
             try {
