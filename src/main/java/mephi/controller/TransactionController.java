@@ -2,6 +2,7 @@ package mephi.controller;
 
 import mephi.core.Controller;
 import mephi.dto.request.CreateTransaction;
+import mephi.dto.request.TransactionResult;
 import mephi.model.Category;
 import mephi.model.Wallet;
 import mephi.model.enums.TransactionType;
@@ -77,12 +78,16 @@ public class TransactionController implements Controller {
         int amountInput = ConsoleReader.readInt("Сумма");
         amount = BigDecimal.valueOf(amountInput);
 
-        transactionService.create(new CreateTransaction(
+        TransactionResult result = transactionService.create(new CreateTransaction(
                         category.getId(),
                         wallet.getId(),
                         TransactionType.get(typeChoice -1),
                         amount
                 )
         );
+        System.out.println("\nОперация выполнена");
+        if (result.isLimitExceeded()) {
+            System.out.printf("\nВнимание!\nПревышен бюджет по категории %s\n", category.getName());
+        }
     }
 }

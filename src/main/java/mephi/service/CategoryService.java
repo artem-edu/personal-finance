@@ -8,7 +8,6 @@ import mephi.repository.CategoryRepository;
 import mephi.repository.WalletRepository;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
 public class CategoryService {
@@ -28,13 +27,9 @@ public class CategoryService {
         categoryRepository.save(category);
     }
 
-    public Category getCategoriesByUserAndName(UUID userId, String name) {
-        Wallet wallet = walletRepository.findByUserId(userId)
-                .orElseThrow(() -> new PersonalFinanceException("Кошелек не найден"));
-
-        Category category = categoryRepository.findByWalletAndName(wallet.getId(), name)
+    public Category getCategoryById(UUID categoryId) {
+        return categoryRepository.findById(categoryId)
                 .orElseThrow(() -> new PersonalFinanceException("Категория не найдена"));
-        return category;
     }
 
     public List<Category> getCategoriesByUserId(UUID userId) {

@@ -83,7 +83,7 @@ class UserServiceTest {
 
     @Test
     void login_ThrowsAuthenticationException_WhenUserNotFound() {
-        LoginRequest request = new LoginRequest("unknownUser", "pwd");
+        LoginRequest request = new LoginRequest("unknownUser", "passwordfdsfdsfds");
         when(userRepository.findByLogin("unknownUser")).thenReturn(Optional.empty());
 
         assertThrows(AuthenticationException.class, () -> userService.login(request));

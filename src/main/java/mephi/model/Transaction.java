@@ -11,6 +11,7 @@ public class Transaction {
     private final UUID walletId;
     private final TransactionType type;
     private final BigDecimal amount;
+    private final long createdAt;
 
     public Transaction(UUID categoryId, UUID walletId, TransactionType type, BigDecimal amount) {
         this.id = UUID.randomUUID();
@@ -18,14 +19,16 @@ public class Transaction {
         this.walletId = walletId;
         this.type = type;
         this.amount = amount;
+        this.createdAt = System.currentTimeMillis();
     }
 
-    public Transaction(UUID id, UUID categoryId, UUID walletId, TransactionType type, BigDecimal amount) {
+    public Transaction(UUID id, UUID categoryId, UUID walletId, TransactionType type, BigDecimal amount, long createdAt) {
         this.id = id;
         this.categoryId = categoryId;
         this.walletId = walletId;
         this.type = type;
         this.amount = amount;
+        this.createdAt = createdAt;
     }
 
     public UUID getId() {
@@ -46,5 +49,9 @@ public class Transaction {
 
     public BigDecimal getAmount() {
         return amount;
+    }
+
+    public long getCreatedAt() {
+        return createdAt;
     }
 }

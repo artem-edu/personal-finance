@@ -19,7 +19,6 @@ import java.util.UUID;
 public class UserService {
     private final UserRepository userRepository;
     private final WalletRepository walletRepository;
-    private final CategoryRepository categoryRepository;
     private final SessionManager sessionManager;
 
     public UserService(
@@ -30,13 +29,10 @@ public class UserService {
     ) {
         this.userRepository = userRepository;
         this.walletRepository = walletRepository;
-        this.categoryRepository = categoryRepository;
         this.sessionManager = sessionManager;
     }
 
     public User register(RegistrationRequest dto) {
-        // todo: валидация данных
-
         if (existLogin(dto.login())) {
             throw new UserAlreadyExistsException(dto.login());
         }
@@ -52,8 +48,6 @@ public class UserService {
     }
 
     public UUID login(LoginRequest dto) {
-        // todo: валидация
-
         Optional<User> user = userRepository.findByLogin(dto.login());
 
         if (user.isEmpty() || !PasswordEncoder.match(dto.password(), user.get().getHasPassword())) {
@@ -82,10 +76,9 @@ public class UserService {
 
     public Wallet getWallet() {
         UUID userId = sessionManager.getUserId();
-        Wallet wallet = walletRepository.findByUserId(userId)
-                .orElseThrow(() -> new PersonalFinanceException("Кошелек не найден"));
 
-        return wallet;
+        return walletRepository.findByUserId(userId)
+                .orElseThrow(() -> new PersonalFinanceException("Кошелек не найден"));
     }
 
     private boolean existLogin(String login) {

@@ -1,11 +1,8 @@
 package mephi.service;
 
-//Реализовать возможность отображения общей суммы доходов и расходов, а также данных по каждой категории.
-//Выводить информацию о текущем состоянии бюджета для каждой категории, а также оставшийся лимит.
-//Поддерживать вывод информации в терминал или в файл.
-
 import mephi.model.*;
 import mephi.model.enums.TransactionType;
+import mephi.repository.TransactionRepository;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -14,16 +11,16 @@ import java.util.UUID;
 
 public class StatService {
     private final UserService userService;
-    private final TransactionService transactionService;
+    private final TransactionRepository transactionRepository;
     private final CategoryService categoryService;
 
     public StatService(
             UserService userService,
-            TransactionService transactionService,
+            TransactionRepository transactionRepository,
             CategoryService categoryService
     ) {
         this.userService = userService;
-        this.transactionService = transactionService;
+        this.transactionRepository = transactionRepository;
         this.categoryService = categoryService;
     }
 
@@ -40,61 +37,51 @@ public class StatService {
         ArrayList<StatByCategory> statByCategories = new ArrayList<>();
 
         for (Category category : categories) {
-            statByCategories.add(
-                    new StatByCategory(
-                            category,
-                            new Stat(getIncome(category.getId()), getExpenses(category.getId())),
-                            getTransactionsByCategory(category.getId())
-                    )
-            );
+            statByCategories.add(getStatByCategory(category.getId()));
         }
 
         return new StatFull(List.copyOf(statByCategories), getShort());
     }
 
+    public StatByCategory getStatByCategory(UUID categoryId) {
+        Category category = categoryService.getCategoryById(categoryId);
+        BigDecimal income = getIncome(categoryId);
+        BigDecimal expenses = getExpenses(categoryId);
+        BigDecimal remainingBudget = BigDecimal.ZERO;
+        if (category.getBudget().signum() != 0) {
+            remainingBudget = category.getBudget().subtract(expenses);
+        }
+
+        List<Transaction> transactions = transactionRepository.findByCategoryId(categoryId);
+
+        return new StatByCategory(
+                category,
+                new Stat(income, expenses),
+                remainingBudget,
+                transactions
+        );
+    }
+
     private BigDecimal getIncome() {
-        return getTransactions()
-                .stream()
-                .filter(t -> t.getType() == TransactionType.DEPOSIT)
-                .map(Transaction::getAmount)
-                .reduce(BigDecimal.ZERO, BigDecimal::add);
+        Wallet wallet = userService.getWallet();
+        return transactionRepository.findAmountByWalletAndType(wallet.getId(), TransactionType.DEPOSIT);
     }
 
     private BigDecimal getIncome(UUID categoryId) {
-        return getTransactionsByCategory(categoryId)
-                .stream()
-                .filter(t -> t.getType() == TransactionType.DEPOSIT)
-                .map(Transaction::getAmount)
-                .reduce(BigDecimal.ZERO, BigDecimal::add);
+        return transactionRepository.findAmountByCategoryAndType(categoryId, TransactionType.DEPOSIT);
     }
 
     private BigDecimal getExpenses() {
-        return getTransactions()
-                .stream()
-                .filter(t -> t.getType() == TransactionType.WITHDRAWAL)
-                .map(Transaction::getAmount)
-                .reduce(BigDecimal.ZERO, BigDecimal::add);
+        Wallet wallet = userService.getWallet();
+        return transactionRepository.findAmountByWalletAndType(wallet.getId(), TransactionType.WITHDRAWAL);
     }
 
     private BigDecimal getExpenses(UUID categoryId) {
-        return getTransactionsByCategory(categoryId)
-                .stream()
-                .filter(t -> t.getType() == TransactionType.WITHDRAWAL)
-                .map(Transaction::getAmount)
-                .reduce(BigDecimal.ZERO, BigDecimal::add);
+        return transactionRepository.findAmountByCategoryAndType(categoryId, TransactionType.WITHDRAWAL);
     }
 
     private BigDecimal getCurrentBalance() {
         Wallet wallet = userService.getWallet();
         return wallet.getBalance();
-    }
-
-    private List<Transaction> getTransactions() {
-        Wallet wallet = userService.getWallet();
-        return transactionService.getTransactionsByWalletId(wallet.getId());
-    }
-
-    private List<Transaction> getTransactionsByCategory(UUID categoryId) {
-        return transactionService.getByCategoryId(categoryId);
     }
 }

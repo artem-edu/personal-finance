@@ -3,7 +3,9 @@ package mephi.repository;
 import com.google.gson.reflect.TypeToken;
 import mephi.core.FileRepository;
 import mephi.model.Transaction;
+import mephi.model.enums.TransactionType;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -40,6 +42,22 @@ public class TransactionRepository extends FileRepository<UUID, Transaction> {
                 .stream()
                 .filter(t -> t.getCategoryId().equals(categoryId))
                 .collect(Collectors.toList());
+    }
+
+    public BigDecimal findAmountByWalletAndType(UUID walletId, TransactionType type) {
+        return findByWalletId(walletId)
+                .stream()
+                .filter(t -> t.getType() == type)
+                .map(Transaction::getAmount)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+    }
+
+    public BigDecimal findAmountByCategoryAndType(UUID categoryId, TransactionType type) {
+        return findByCategoryId(categoryId)
+                .stream()
+                .filter(t -> t.getType() == type)
+                .map(Transaction::getAmount)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
     }
 
     public List<Transaction> findAll() {

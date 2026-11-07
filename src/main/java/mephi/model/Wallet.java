@@ -29,9 +29,10 @@ public class Wallet {
 
     public void withdraw(BigDecimal amount) {
         assertPositive(amount);
-        if (balance.compareTo(amount) < 0) {
-            throw new InsufficientFundsException(balance, amount);
-        }
+        // TODO: судя по условию задачи, можем уходить в минус, но с оповещением
+//        if (balance.compareTo(amount) < 0) {
+//            throw new InsufficientFundsException(balance, amount);
+//        }
         balance = balance.subtract(amount);
     }
 
