@@ -44,12 +44,8 @@ public class TransactionController implements Controller {
 
         String action = args.get(0);
         switch (action) {
-            case "help" -> {
-                help();
-            }
-            case "create" -> {
-                create(wallet);
-            }
+            case "help" -> help();
+            case "create" -> create(wallet);
         }
     }
 

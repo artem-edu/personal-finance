@@ -9,14 +9,13 @@ import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
 public class TransactionRepository extends FileRepository<UUID, Transaction> {
     private static final String FILE_DB = "db/transactions.json";
 
     public TransactionRepository() {
-        super(FILE_DB, new TypeToken<ConcurrentHashMap<UUID, Transaction>>() {
+        super(FILE_DB, new TypeToken<>() {
         });
         loadFromFile();
     }

@@ -37,15 +37,9 @@ public class CategoryController implements Controller {
         String action = args.get(0);
 
         switch (action) {
-            case "help" -> {
-                help();
-            }
-            case "create" -> {
-                create();
-            }
-            case "list" -> {
-                list();
-            }
+            case "help" -> help();
+            case "create" -> create();
+            case "list" -> list();
         }
     }
 

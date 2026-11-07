@@ -33,15 +33,9 @@ public class StatController implements Controller {
 
         String action = args.get(0).toLowerCase();
         switch (action) {
-            case "help" -> {
-                help();
-            }
-            case "short" -> {
-                showShort();
-            }
-            case "full" -> {
-                showFull();
-            }
+            case "help" -> help();
+            case "short" -> showShort();
+            case "full" -> showFull();
         }
     }
 
@@ -62,13 +56,11 @@ public class StatController implements Controller {
             String renderedInnerTable = "-";
             if (!s.transactions().isEmpty()) {
                 List<String[]> transactionsRows = new ArrayList<>();
-                s.transactions().forEach(t -> {
-                    transactionsRows.add(new String[]{
-                            t.getType().getMessage(),
-                            String.format("%,.2f руб", t.getAmount()),
-                            DateFormatter.format(t.getCreatedAt())
-                    });
-                });
+                s.transactions().forEach(t -> transactionsRows.add(new String[]{
+                        t.getType().getMessage(),
+                        String.format("%,.2f руб", t.getAmount()),
+                        DateFormatter.format(t.getCreatedAt())
+                }));
                 renderedInnerTable = AsciiTable.getTable(transactionsHeader, transactionsRows.toArray(new String[0][0]));
             }
             categoriesRows.add(new String[]{

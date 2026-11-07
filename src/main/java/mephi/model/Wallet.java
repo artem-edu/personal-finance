@@ -1,7 +1,5 @@
 package mephi.model;
 
-import mephi.exception.InsufficientFundsException;
-
 import java.math.BigDecimal;
 import java.util.UUID;
 

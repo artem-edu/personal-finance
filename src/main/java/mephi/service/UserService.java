@@ -7,7 +7,6 @@ import mephi.exception.PersonalFinanceException;
 import mephi.exception.UserAlreadyExistsException;
 import mephi.model.User;
 import mephi.model.Wallet;
-import mephi.repository.CategoryRepository;
 import mephi.repository.UserRepository;
 import mephi.repository.WalletRepository;
 import mephi.util.PasswordEncoder;
@@ -24,7 +23,6 @@ public class UserService {
     public UserService(
             UserRepository userRepository,
             WalletRepository walletRepository,
-            CategoryRepository categoryRepository,
             SessionManager sessionManager
     ) {
         this.userRepository = userRepository;
