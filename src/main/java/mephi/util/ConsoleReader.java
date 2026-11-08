@@ -1,8 +1,6 @@
 package mephi.util;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Scanner;
+import java.util.*;
 
 public class ConsoleReader {
     private static final Scanner scanner = new Scanner(System.in);
@@ -33,6 +31,44 @@ public class ConsoleReader {
                     return input;
                 }
                 System.out.printf("Ошибка: число должно быть от %d до %d\n", min, max);
+            } catch (NumberFormatException e) {
+                System.out.print(prompt + ": ");
+            }
+        }
+    }
+
+    public static int[] readIns(String prompt, int min, int max) {
+        System.out.print(prompt + ": ");
+        while (true) {
+            try {
+                String line = scanner.nextLine().trim();
+                if (line.isEmpty()) {
+                    System.out.println("Ошибка: ввод не должен быть пустым.");
+                    System.out.print(prompt + ": ");
+                    continue;
+                }
+
+                String[] tokens = line.split("\\s+");
+                Set<Integer> uniqueNumbers = new HashSet<>();
+                boolean isError = false;
+
+                for (String token : tokens) {
+                    int num = Integer.parseInt(token);
+                    if (num < min || num > max) {
+                        System.out.printf("Ошибка: число %d должно быть от %d до %d\n", num, min, max);
+                        isError = true;
+                        break;
+                    }
+                    uniqueNumbers.add(num);
+                }
+
+                if (!isError) {
+                    return uniqueNumbers
+                            .stream()
+                            .mapToInt(Integer::intValue)
+                            .toArray();
+                }
+
             } catch (NumberFormatException e) {
                 System.out.print(prompt + ": ");
             }

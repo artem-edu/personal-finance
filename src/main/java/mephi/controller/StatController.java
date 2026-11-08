@@ -2,19 +2,31 @@ package mephi.controller;
 
 import com.github.freva.asciitable.AsciiTable;
 import mephi.core.Controller;
-import mephi.model.StatFull;
-import mephi.model.StatShort;
+import mephi.model.*;
+import mephi.service.CategoryService;
 import mephi.service.StatService;
+import mephi.service.UserService;
+import mephi.util.ConsoleReader;
 import mephi.util.DateFormatter;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.UUID;
 
 public class StatController implements Controller {
     private final StatService statService;
+    private final CategoryService categoryService;
+    private final UserService userService;
 
-    public StatController(StatService statService) {
+    public StatController(
+            StatService statService,
+            CategoryService categoryService,
+            UserService userService
+    ) {
         this.statService = statService;
+        this.categoryService = categoryService;
+        this.userService = userService;
     }
 
     @Override
@@ -22,6 +34,7 @@ public class StatController implements Controller {
         System.out.println("\n=== Статистика ===");
         System.out.println("stat short - получить краткую статистику");
         System.out.println("stat full - получить полную статистику");
+        System.out.println("stat category - получить статистику по категориям");
     }
 
     @Override
@@ -36,6 +49,7 @@ public class StatController implements Controller {
             case "help" -> help();
             case "short" -> showShort();
             case "full" -> showFull();
+            case "category" -> showByCategory();
         }
     }
 
@@ -48,6 +62,25 @@ public class StatController implements Controller {
 
     private void showFull() {
         StatFull statFull = statService.getFull();
+        showStat(statFull);
+    }
+
+    private void showByCategory() {
+        Wallet wallet = userService.getWallet();
+        List<Category> categories = categoryService.getCategoriesByUserId(wallet.getUserId());
+        for (int i = 0; i < categories.size(); i++) {
+            System.out.printf("%d) %s\n", i + 1, categories.get(i).getName());
+        }
+        UUID[] categoriesIdChoice = Arrays.stream(ConsoleReader
+                .readIns("Категории (ввод через пробел)", 1, categories.size()))
+                .mapToObj(i -> categories.get(i -1).getId())
+                .toArray(UUID[]::new);
+
+        StatFull statFull = statService.getByCategories(categoriesIdChoice);
+        showStat(statFull);
+    }
+
+    private void showStat(StatFull statFull) {
         String[] categoriesHeaders = {"Категория", "Бюджет", "Оставшийся бюджет", "Только для пополнение", "Доход", "Расход", "Транзакции"};
         String[] transactionsHeader = {"Операция", "Сумма", "Дата"};
         List<String[]> categoriesRows = new ArrayList<>();

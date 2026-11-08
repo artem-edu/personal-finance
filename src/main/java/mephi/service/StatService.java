@@ -43,6 +43,15 @@ public class StatService {
         return new StatFull(List.copyOf(statByCategories), getShort());
     }
 
+    public StatFull getByCategories(UUID[] categoriesId) {
+        ArrayList<StatByCategory> statByCategories = new ArrayList<>();
+        for (UUID id: categoriesId) {
+            statByCategories.add(getStatByCategory(id));
+        }
+
+        return new StatFull(List.copyOf(statByCategories), getShort());
+    }
+
     public StatByCategory getStatByCategory(UUID categoryId) {
         Category category = categoryService.getCategoryById(categoryId);
         BigDecimal income = getIncome(categoryId);
