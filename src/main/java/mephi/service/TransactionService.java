@@ -1,7 +1,7 @@
 package mephi.service;
 
 import mephi.dto.request.CreateTransaction;
-import mephi.dto.request.TransactionResult;
+import mephi.dto.response.TransactionResult;
 import mephi.exception.PersonalFinanceException;
 import mephi.model.Category;
 import mephi.model.StatByCategory;

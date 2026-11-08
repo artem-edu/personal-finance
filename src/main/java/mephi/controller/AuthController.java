@@ -6,23 +6,25 @@ import mephi.exception.PersonalFinanceException;
 import mephi.service.UserService;
 import mephi.util.ConsoleReader;
 import mephi.core.Controller;
+import mephi.view.AuthView;
 
 import java.util.List;
 
 public class AuthController implements Controller {
     private final UserService userService;
+    private final AuthView view;
 
-    public AuthController(UserService userService) {
+    public AuthController(
+            UserService userService,
+            AuthView view
+    ) {
         this.userService = userService;
+        this.view = view;
     }
 
     @Override
     public void help() {
-        System.out.println("\n[ Авторизация и регистрация ]");
-        String format = "\t %-25s - %s\n";
-        System.out.printf(format, "auth login", "авторизация");
-        System.out.printf(format, "auth reg", "регистрация");
-        System.out.printf(format, "auth logout", "выход из учетной записи");
+        view.printHelp();
     }
 
     @Override
@@ -38,49 +40,47 @@ public class AuthController implements Controller {
             case "login" -> login();
             case "reg" -> register();
             case "logout" -> logout();
-            default -> System.out.println("Команда не найдена, вывод справки >> auth help");
+            default -> view.printUnknownAction();
         }
     }
 
     private void login() {
         if (userService.isLogged()) {
-            System.out.println("Вы уже авторизованы.");
-            System.out.println("Для входа в другой аккаунт выполните выход >> auth logout");
+            view.printAlreadyLogged();
             return;
         }
-        System.out.println("\n[ Авторизация ]");
+        view.printLoginHeader();
         String login = ConsoleReader.readString("Логин");
         String password = ConsoleReader.readString("Пароль");
 
         try {
             userService.login(new LoginRequest(login, password));
-            System.out.println("\nДобро пожаловать, " + login);
+            view.printLoginSuccess(login);
 
         } catch (PersonalFinanceException e) {
-            System.out.println("\nОшибка: " + e.getMessage());
+            view.printError(e);
         }
     }
 
     private void register() {
         if (userService.isLogged()) {
-            System.out.println("\nВы уже авторизованы.");
-            System.out.println("Для входа в другой аккаунт выполните выход >> auth logout");
+            view.printAlreadyLogged();
             return;
         }
-        System.out.println("\n[ Регистрация ]");
+        view.printRegHeader();
         String login = ConsoleReader.readString("Логин");
         String password = ConsoleReader.readString("Пароль");
 
         try {
             userService.register(new RegistrationRequest(login, password));
-            System.out.println("\nПользователь создан. Теперь войдите. >> auth login");
+            view.printRegSuccess();
         } catch (PersonalFinanceException e) {
-            System.out.println("Ошибка регистрации: " + e.getMessage());
+            view.printError(e);
         }
     }
 
     private void logout() {
         userService.logout();
-        System.out.println("\nВы вышли из системы.");
+        view.printLogoutSuccess();
     }
 }

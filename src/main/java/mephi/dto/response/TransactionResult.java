@@ -1,4 +1,4 @@
-package mephi.dto.request;
+package mephi.dto.response;
 
 import mephi.model.Transaction;
 

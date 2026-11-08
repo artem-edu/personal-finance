@@ -1,6 +1,5 @@
 package mephi.controller;
 
-import com.github.freva.asciitable.AsciiTable;
 import mephi.core.Controller;
 import mephi.dto.request.CreateCategory;
 import mephi.model.Category;
@@ -8,27 +7,29 @@ import mephi.model.User;
 import mephi.service.CategoryService;
 import mephi.service.UserService;
 import mephi.util.ConsoleReader;
+import mephi.view.CategoryView;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.List;
 
 public class CategoryController implements Controller {
     private final CategoryService categoryService;
     private final UserService userService;
+    private final CategoryView view;
 
-    public CategoryController(CategoryService categoryService, UserService userService) {
+    public CategoryController(
+            CategoryService categoryService,
+            UserService userService,
+            CategoryView view
+    ) {
         this.categoryService = categoryService;
         this.userService = userService;
+        this.view = view;
     }
 
     @Override
     public void help() {
-        System.out.println("\n[ Категории ]");
-        String format = "\t %-25s - %s\n";
-        System.out.printf(format, "category list", "список категорий");
-        System.out.printf(format, "category create", "создать категорию");
-        System.out.printf(format, "category edit", "редактировать категорию");
+        view.printHelp();
     }
 
     @Override
@@ -43,13 +44,13 @@ public class CategoryController implements Controller {
             case "help" -> help();
             case "create" -> create();
             case "list" -> list();
-            default -> System.out.println("\nКоманда не найдена, вывод справки >> category help");
+            default -> view.printUnknownAction();
         }
     }
 
     private void create() {
         User user = userService.getCurrentUser();
-        System.out.println("\n [Создание категории ]");
+        view.printCreateCategoryHeader();
         String name = ConsoleReader.readString("Название");
         boolean isDepositOnly = ConsoleReader.readBoolean("Режим только пополнения?");
         BigDecimal budget = BigDecimal.ZERO;
@@ -59,26 +60,13 @@ public class CategoryController implements Controller {
             budget = BigDecimal.valueOf(budgetValue);
         }
         categoryService.create(new CreateCategory(name, user.getId(), budget, isDepositOnly));
-        System.out.printf("\nКатегория %s успешно создана.", name);
+        view.createSuccess(name);
     }
 
     private void list() {
         User user = userService.getCurrentUser();
-        System.out.println("\n[ Список категорий ]");
-        String[] tableHeaders = {"Имя", "Бюджет", "Только пополнение"};
-        List<String[]> tableRows = new ArrayList<>();
+        view.printCategoriesListHeader();
         List<Category> categories = categoryService.getCategoriesByUserId(user.getId());
-
-        categories.forEach(category -> {
-            String budgetWithCurrency = String.format("%,.2f руб.", category.getBudget());
-            tableRows.add(new String[]{
-                    category.getName(),
-                    category.getIsDepositOnly() ? "-" : budgetWithCurrency,
-                    category.getIsDepositOnly() ? "Да" : "Нет"
-            });
-        });
-
-        System.out.println();
-        System.out.println(AsciiTable.getTable(tableHeaders, tableRows.toArray(new String[0][0])));
+        view.printCategoriesList(categories);
     }
 }

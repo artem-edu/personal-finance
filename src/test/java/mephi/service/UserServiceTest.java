@@ -9,7 +9,7 @@ import mephi.model.User;
 import mephi.model.Wallet;
 import mephi.repository.UserRepository;
 import mephi.repository.WalletRepository;
-import mephi.util.SessionManager;
+import mephi.core.SessionManager;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;

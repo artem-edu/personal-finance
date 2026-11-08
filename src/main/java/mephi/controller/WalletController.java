@@ -4,6 +4,7 @@ import mephi.model.User;
 import mephi.service.UserService;
 import mephi.service.WalletService;
 import mephi.core.Controller;
+import mephi.view.WalletView;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -12,17 +13,21 @@ import java.util.UUID;
 public class WalletController implements Controller {
     private final WalletService walletService;
     private final UserService userService;
+    private final WalletView view;
 
-    public WalletController(WalletService walletService, UserService userService) {
+    public WalletController(
+            WalletService walletService,
+            UserService userService,
+            WalletView view
+    ) {
         this.walletService = walletService;
         this.userService = userService;
+        this.view = view;
     }
 
     @Override
     public void help() {
-        System.out.println("\n[ Кошелек ]");
-        String format = "\t %-25s - %s\n";
-        System.out.printf(format, "wallet balance", "показать баланс");
+        view.printHelp();
     }
 
     @Override
@@ -36,12 +41,12 @@ public class WalletController implements Controller {
         switch (action) {
             case "help" -> help();
             case "balance" -> showBalance(user.getId());
-            default -> System.out.println("Команда не найдена, вывод справки >> wallet help");
+            default -> view.printUnknownAction();
         }
     }
 
     private void showBalance(UUID userId) {
         BigDecimal balance = walletService.getBalance(userId);
-        System.out.println("\nБаланс: " + balance + " руб.");
+        view.printBalance(balance);
     }
 }

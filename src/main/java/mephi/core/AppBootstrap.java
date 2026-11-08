@@ -3,7 +3,7 @@ package mephi.core;
 import mephi.controller.*;
 import mephi.repository.*;
 import mephi.service.*;
-import mephi.util.SessionManager;
+import mephi.view.*;
 
 public class AppBootstrap {
     public static Router bootstrap() {
@@ -29,6 +29,15 @@ public class AppBootstrap {
                 StatService.class
         );
 
+        // регистрация представления
+        container.provide(
+                AuthView.class,
+                CategoryView.class,
+                StatView.class,
+                TransactionView.class,
+                WalletView.class
+        );
+
         // регистрация контроллеров
         container.provide(
                 AuthController.class,
@@ -39,7 +48,7 @@ public class AppBootstrap {
                 StatController.class
         );
 
-        // утилиты и прочии классы
+        // утилиты и прочие классы
         container.provide(router);
 
         // регистрация маршрутов

@@ -2,7 +2,7 @@ package mephi.controller;
 
 import mephi.core.Controller;
 import mephi.dto.request.CreateTransaction;
-import mephi.dto.request.TransactionResult;
+import mephi.dto.response.TransactionResult;
 import mephi.model.Category;
 import mephi.model.Wallet;
 import mephi.model.enums.TransactionType;
@@ -10,6 +10,7 @@ import mephi.service.CategoryService;
 import mephi.service.TransactionService;
 import mephi.service.UserService;
 import mephi.util.ConsoleReader;
+import mephi.view.TransactionView;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -18,22 +19,23 @@ public class TransactionController implements Controller {
     private final UserService userService;
     private final TransactionService transactionService;
     private final CategoryService categoryService;
+    private final TransactionView view;
 
     public TransactionController(
             UserService userService,
             TransactionService transactionService,
-            CategoryService categoryService
+            CategoryService categoryService,
+            TransactionView view
     ) {
         this.userService = userService;
         this.transactionService = transactionService;
         this.categoryService = categoryService;
+        this.view = view;
     }
 
     @Override
     public void help() {
-        System.out.println("\n[ Транзакции ]");
-        String format = "\t %-25s - %s\n";
-        System.out.printf(format, "transaction create", "создать транзакцию");
+        view.printHelp();
     }
 
     @Override
@@ -48,29 +50,23 @@ public class TransactionController implements Controller {
         switch (action) {
             case "help" -> help();
             case "create" -> create(wallet);
-            default -> System.out.println("Команда не найдена, вывод справки >> transaction help");
+            default -> view.printUnknownAction();
         }
     }
 
     private void create(Wallet wallet) {
-        System.out.println("\n[ Создание транзакции ]");
+        view.printCreateHeder();
         List<Category> categories = categoryService.getCategoriesByUserId(wallet.getUserId());
-        System.out.printf("\n%d) %s\n", 0, "--- новая категория ---");
-        for (int i = 0; i < categories.size(); i++) {
-            System.out.printf("%d) %s\n", i + 1, categories.get(i).getName());
-        }
+        view.printCategoryList(categories);
         int categoryChoice = ConsoleReader.readInt("Категория", 0, categories.size());
 
         if (categoryChoice == 0) {
-            System.out.println("\nСоздание категорий во время транзакции пока не доступно");
-            System.out.println("Выполните команду >> category create");
+            view.printCreateCategoryPlaceholder();
             return;
         }
         Category category = categories.get(categoryChoice - 1);
 
-        for (TransactionType type : TransactionType.values()) {
-            System.out.printf("%d) %s\n", type.ordinal() + 1, type.getMessage());
-        }
+        view.printTransactions(TransactionType.values());
         int typeChoice = ConsoleReader.readInt("Тип транзакции", 1, TransactionType.size());
 
         BigDecimal amount;
@@ -80,13 +76,13 @@ public class TransactionController implements Controller {
         TransactionResult result = transactionService.create(new CreateTransaction(
                         category.getId(),
                         wallet.getId(),
-                        TransactionType.get(typeChoice -1),
+                        TransactionType.get(typeChoice - 1),
                         amount
                 )
         );
-        System.out.println("\nТранзакция успешно выполнена");
+        view.printTransactionSuccess();
         if (result.isLimitExceeded()) {
-            System.out.printf("\nВнимание!\nПревышен бюджет по категории %s\n", category.getName());
+            view.printLimitExceededWarning(category.getName());
         }
     }
 }

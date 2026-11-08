@@ -10,7 +10,7 @@ import mephi.model.Wallet;
 import mephi.repository.UserRepository;
 import mephi.repository.WalletRepository;
 import mephi.util.PasswordEncoder;
-import mephi.util.SessionManager;
+import mephi.core.SessionManager;
 
 import java.util.Optional;
 import java.util.UUID;

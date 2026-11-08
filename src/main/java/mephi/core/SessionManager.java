@@ -1,4 +1,4 @@
-package mephi.util;
+package mephi.core;
 
 import mephi.exception.AuthenticationException;
 
