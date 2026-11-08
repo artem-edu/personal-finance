@@ -2,6 +2,7 @@ package mephi.core;
 
 import mephi.exception.PersonalFinanceException;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -20,10 +21,14 @@ public class Router {
         Controller controller = routes.get(routeName);
 
         if (controller == null) {
-            throw new PersonalFinanceException("Маршрут не найден!");
+            throw new PersonalFinanceException("Команда не найдена, вывод справки >> help");
         }
 
         List<String> args = tokens.subList(1, tokens.size());
         controller.handleCommand(args);
+    }
+
+    public Map<String, Controller> getRoutes() {
+        return Collections.unmodifiableMap(routes);
     }
 }

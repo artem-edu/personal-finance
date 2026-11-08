@@ -31,7 +31,9 @@ public class TransactionController implements Controller {
 
     @Override
     public void help() {
-
+        System.out.println("\n[ Транзакции ]");
+        String format = "\t %-25s - %s\n";
+        System.out.printf(format, "transaction create", "создать транзакцию");
     }
 
     @Override
@@ -46,20 +48,21 @@ public class TransactionController implements Controller {
         switch (action) {
             case "help" -> help();
             case "create" -> create(wallet);
+            default -> System.out.println("Команда не найдена, вывод справки >> transaction help");
         }
     }
 
     private void create(Wallet wallet) {
-        System.out.println("\n=== Создание транзакции ===");
+        System.out.println("\n[ Создание транзакции ]");
         List<Category> categories = categoryService.getCategoriesByUserId(wallet.getUserId());
-        System.out.printf("%d) %s\n", 0, "--- новая категория ---");
+        System.out.printf("\n%d) %s\n", 0, "--- новая категория ---");
         for (int i = 0; i < categories.size(); i++) {
             System.out.printf("%d) %s\n", i + 1, categories.get(i).getName());
         }
         int categoryChoice = ConsoleReader.readInt("Категория", 0, categories.size());
 
         if (categoryChoice == 0) {
-            System.out.println("Создание категорий во время транзакции пока не доступно");
+            System.out.println("\nСоздание категорий во время транзакции пока не доступно");
             System.out.println("Выполните команду >> category create");
             return;
         }
@@ -81,7 +84,7 @@ public class TransactionController implements Controller {
                         amount
                 )
         );
-        System.out.println("\nОперация выполнена");
+        System.out.println("\nТранзакция успешно выполнена");
         if (result.isLimitExceeded()) {
             System.out.printf("\nВнимание!\nПревышен бюджет по категории %s\n", category.getName());
         }

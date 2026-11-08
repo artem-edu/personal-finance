@@ -20,8 +20,9 @@ public class WalletController implements Controller {
 
     @Override
     public void help() {
-        System.out.println("\n===Справка===");
-        System.out.println("wallet balance - показать баланс");
+        System.out.println("\n[ Кошелек ]");
+        String format = "\t %-25s - %s\n";
+        System.out.printf(format, "wallet balance", "показать баланс");
     }
 
     @Override
@@ -33,20 +34,14 @@ public class WalletController implements Controller {
         }
         String action = args.get(0);
         switch (action) {
-            case "help" -> {
-                help();
-            }
-            case "balance" -> {
-                showBalance(user.getId());
-            }
-            default -> {
-                System.out.println("Команда не найдена, вывод справка wallet help");
-            }
+            case "help" -> help();
+            case "balance" -> showBalance(user.getId());
+            default -> System.out.println("Команда не найдена, вывод справки >> wallet help");
         }
     }
 
     private void showBalance(UUID userId) {
         BigDecimal balance = walletService.getBalance(userId);
-        System.out.println("Баланс: " + balance + " руб.");
+        System.out.println("\nБаланс: " + balance + " руб.");
     }
 }

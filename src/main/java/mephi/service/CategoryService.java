@@ -20,6 +20,7 @@ public class CategoryService {
     }
 
     public void create(CreateCategory dto) {
+        // TODO: добавить проверку на существующую категорию
         Wallet wallet = walletRepository.findByUserId(dto.userId())
                 .orElseThrow(() -> new PersonalFinanceException("Кошелек не найден"));
 

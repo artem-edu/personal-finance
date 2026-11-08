@@ -8,6 +8,7 @@ import mephi.util.SessionManager;
 public class AppBootstrap {
     public static Router bootstrap() {
         DIContainer container = new DIContainer();
+        Router router = new Router();
 
         // регистрация репозиториев
         container.provide(
@@ -38,7 +39,9 @@ public class AppBootstrap {
                 StatController.class
         );
 
-        Router router = new Router();
+        // утилиты и прочии классы
+        container.provide(router);
+
         // регистрация маршрутов
         router.register("help", container.get(HelpController.class));
         router.register("auth", container.get(AuthController.class));

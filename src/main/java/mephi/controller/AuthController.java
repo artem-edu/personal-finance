@@ -18,10 +18,11 @@ public class AuthController implements Controller {
 
     @Override
     public void help() {
-        System.out.println("\n=== Авторизация/регистрация ==");
-        System.out.println("auth login - авторизация");
-        System.out.println("auth reg - регистрация");
-        System.out.println("auth logout - выход из учетной записи");
+        System.out.println("\n[ Авторизация и регистрация ]");
+        String format = "\t %-25s - %s\n";
+        System.out.printf(format, "auth login", "авторизация");
+        System.out.printf(format, "auth reg", "регистрация");
+        System.out.printf(format, "auth logout", "выход из учетной записи");
     }
 
     @Override
@@ -33,21 +34,11 @@ public class AuthController implements Controller {
         String action = args.get(0);
 
         switch (action) {
-            case "help" -> {
-                help();
-            }
-            case "login" -> {
-                login();
-            }
-            case "reg" -> {
-                register();
-            }
-            case "logout" -> {
-                logout();
-            }
-            default -> {
-                System.out.println("Команда не найдена, вывод справка auth help");
-            }
+            case "help" -> help();
+            case "login" -> login();
+            case "reg" -> register();
+            case "logout" -> logout();
+            default -> System.out.println("Команда не найдена, вывод справки >> auth help");
         }
     }
 
@@ -57,32 +48,32 @@ public class AuthController implements Controller {
             System.out.println("Для входа в другой аккаунт выполните выход >> auth logout");
             return;
         }
-        System.out.println("\n=== Авторизация ===");
-        String login = ConsoleReader.readString("Логин: ");
-        String password = ConsoleReader.readString("Пароль: ");
+        System.out.println("\n[ Авторизация ]");
+        String login = ConsoleReader.readString("Логин");
+        String password = ConsoleReader.readString("Пароль");
 
         try {
             userService.login(new LoginRequest(login, password));
-            System.out.println("Добро пожаловать, " + login);
+            System.out.println("\nДобро пожаловать, " + login);
 
         } catch (PersonalFinanceException e) {
-            System.out.println("Ошибка: " + e.getMessage());
+            System.out.println("\nОшибка: " + e.getMessage());
         }
     }
 
     private void register() {
         if (userService.isLogged()) {
-            System.out.println("Вы уже авторизованы.");
+            System.out.println("\nВы уже авторизованы.");
             System.out.println("Для входа в другой аккаунт выполните выход >> auth logout");
             return;
         }
-        System.out.println("\n=== Регистрация ===");
-        String login = ConsoleReader.readString("Логин: ");
-        String password = ConsoleReader.readString("Пароль: ");
+        System.out.println("\n[ Регистрация ]");
+        String login = ConsoleReader.readString("Логин");
+        String password = ConsoleReader.readString("Пароль");
 
         try {
             userService.register(new RegistrationRequest(login, password));
-            System.out.println("Пользователь создан. Теперь войдите. >> auth login");
+            System.out.println("\nПользователь создан. Теперь войдите. >> auth login");
         } catch (PersonalFinanceException e) {
             System.out.println("Ошибка регистрации: " + e.getMessage());
         }
@@ -90,6 +81,6 @@ public class AuthController implements Controller {
 
     private void logout() {
         userService.logout();
-        System.out.println("Вы вышли из системы.");
+        System.out.println("\nВы вышли из системы.");
     }
 }

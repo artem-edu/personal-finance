@@ -31,10 +31,11 @@ public class StatController implements Controller {
 
     @Override
     public void help() {
-        System.out.println("\n=== Статистика ===");
-        System.out.println("stat short - получить краткую статистику");
-        System.out.println("stat full - получить полную статистику");
-        System.out.println("stat category - получить статистику по категориям");
+        System.out.println("\n[ Статистика ]");
+        String format = "\t %-25s - %s\n";
+        System.out.printf(format, "stat short", "краткая статистика");
+        System.out.printf(format, "stat full", "расширенная статистика по всем категориям");
+        System.out.printf(format, "stat category", "расширенная статистика по выбранным категориям");
     }
 
     @Override
@@ -50,12 +51,13 @@ public class StatController implements Controller {
             case "short" -> showShort();
             case "full" -> showFull();
             case "category" -> showByCategory();
+            default -> System.out.println("Команда не найдена, вывод справки >> stat help");
         }
     }
 
     private void showShort() {
         StatShort statShort = statService.getShort();
-        System.out.printf("Общий доход: %,.2f руб.\n", statShort.stat().income());
+        System.out.printf("\nОбщий доход: %,.2f руб.\n", statShort.stat().income());
         System.out.printf("Общие расходы: %,.2f руб.\n", statShort.stat().expenses());
         System.out.printf("Текущий баланс: %,.2f руб.\n", statShort.currentBalance());
     }
@@ -72,8 +74,8 @@ public class StatController implements Controller {
             System.out.printf("%d) %s\n", i + 1, categories.get(i).getName());
         }
         UUID[] categoriesIdChoice = Arrays.stream(ConsoleReader
-                .readIns("Категории (ввод через пробел)", 1, categories.size()))
-                .mapToObj(i -> categories.get(i -1).getId())
+                        .readIns("Категории (ввод через пробел)", 1, categories.size()))
+                .mapToObj(i -> categories.get(i - 1).getId())
                 .toArray(UUID[]::new);
 
         StatFull statFull = statService.getByCategories(categoriesIdChoice);
@@ -107,6 +109,7 @@ public class StatController implements Controller {
             });
         });
 
+        System.out.println();
         System.out.println(AsciiTable.getTable(categoriesHeaders, categoriesRows.toArray(new String[0][0])));
         showShort();
     }
