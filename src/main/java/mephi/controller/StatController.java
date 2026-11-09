@@ -3,12 +3,12 @@ package mephi.controller;
 import mephi.core.Controller;
 import mephi.model.*;
 import mephi.service.CategoryService;
+import mephi.service.ReportService;
 import mephi.service.StatService;
 import mephi.service.UserService;
 import mephi.util.ConsoleReader;
 import mephi.view.StatView;
 
-import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
@@ -18,17 +18,20 @@ public class StatController implements Controller {
     private final CategoryService categoryService;
     private final UserService userService;
     private final StatView view;
+    private final ReportService reportService;
 
     public StatController(
             StatService statService,
             CategoryService categoryService,
             UserService userService,
-            StatView view
+            StatView view,
+            ReportService reportService
     ) {
         this.statService = statService;
         this.categoryService = categoryService;
         this.userService = userService;
         this.view = view;
+        this.reportService = reportService;
     }
 
     @Override
@@ -49,6 +52,7 @@ public class StatController implements Controller {
             case "short" -> showShort();
             case "full" -> showFull();
             case "category" -> showByCategory();
+            case "report" -> getReport();
             default -> view.printUnknownAction();
         }
     }
@@ -77,4 +81,10 @@ public class StatController implements Controller {
         StatFull statFull = statService.getStatFullByCategories(categoriesIdChoice);
         view.printFullStats(statFull, wallet.getBalance());
     }
+
+    private void getReport() {
+        StatFull statFull = statService.getStatFull();
+        reportService.byCategories(statFull.stats(), "test.cvs");
+    }
+
 }

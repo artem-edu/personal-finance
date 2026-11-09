@@ -26,7 +26,8 @@ public class AppBootstrap {
                 WalletService.class,
                 CategoryService.class,
                 TransactionService.class,
-                StatService.class
+                StatService.class,
+                ReportService.class
         );
 
         // регистрация представления

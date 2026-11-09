@@ -15,6 +15,7 @@ public class StatView {
         System.out.printf(format, "stat short", "краткая статистика");
         System.out.printf(format, "stat full", "расширенная статистика по всем категориям");
         System.out.printf(format, "stat category", "расширенная статистика по выбранным категориям");
+        System.out.printf(format, "stat report", "выгрузить cvs отчет");
     }
 
     public void printShort(StatShort statShort) {
