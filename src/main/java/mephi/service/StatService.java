@@ -6,6 +6,7 @@ import mephi.repository.TransactionRepository;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 
@@ -24,51 +25,58 @@ public class StatService {
         this.categoryService = categoryService;
     }
 
-    public StatShort getShort() {
+    public StatShort getStatShort() {
         return new StatShort(
-                new Stat(getIncome(), getExpenses()),
+                getStat(),
                 getCurrentBalance()
         );
     }
 
-    public StatFull getFull() {
+    public Stat getStat() {
+        return new Stat(getIncome(), getExpenses());
+    }
+
+    public StatFull getStatFull() {
         Wallet wallet = userService.getWallet();
-        List<Category> categories = categoryService.getCategoriesByUserId(wallet.getUserId());
-        ArrayList<StatByCategory> statByCategories = new ArrayList<>();
-
-        for (Category category : categories) {
-            statByCategories.add(getStatByCategory(category.getId()));
-        }
-
-        return new StatFull(List.copyOf(statByCategories), getShort());
+        List<UUID> categoriesId = categoryService.getCategoriesByUserId(wallet.getUserId())
+                .stream()
+                .map(Category::getId)
+                .toList();
+        return buildStatFull(categoriesId);
     }
 
-    public StatFull getByCategories(UUID[] categoriesId) {
-        ArrayList<StatByCategory> statByCategories = new ArrayList<>();
-        for (UUID id: categoriesId) {
-            statByCategories.add(getStatByCategory(id));
-        }
-
-        return new StatFull(List.copyOf(statByCategories), getShort());
+    public StatFull getStatFullByCategories(UUID[] categoriesId) {
+        return buildStatFull(Arrays.asList(categoriesId));
     }
 
-    public StatByCategory getStatByCategory(UUID categoryId) {
+    public StatFullByCategory getStatFullByCategory(UUID categoryId) {
         Category category = categoryService.getCategoryById(categoryId);
         BigDecimal income = getIncome(categoryId);
         BigDecimal expenses = getExpenses(categoryId);
-        BigDecimal remainingBudget = BigDecimal.ZERO;
-        if (category.getBudget().signum() != 0) {
-            remainingBudget = category.getBudget().subtract(expenses);
-        }
+        BigDecimal remainingBudget = calculateRemainingBudget(category.getBudget(), expenses);
 
         List<Transaction> transactions = transactionRepository.findByCategoryId(categoryId);
 
-        return new StatByCategory(
+        return new StatFullByCategory(
                 category,
                 new Stat(income, expenses),
                 remainingBudget,
                 transactions
         );
+    }
+
+    private StatFull buildStatFull(List<UUID> categoryIds) {
+        List<StatFullByCategory> statByCategories = new ArrayList<>(categoryIds.size());
+        BigDecimal income = BigDecimal.ZERO;
+        BigDecimal expenses = BigDecimal.ZERO;
+
+        for (UUID id : categoryIds) {
+            income = income.add(getIncome(id));
+            expenses = expenses.add(getExpenses(id));
+            statByCategories.add(getStatFullByCategory(id));
+        }
+
+        return new StatFull(List.copyOf(statByCategories), new Stat(income, expenses));
     }
 
     private BigDecimal getIncome() {
@@ -92,5 +100,12 @@ public class StatService {
     private BigDecimal getCurrentBalance() {
         Wallet wallet = userService.getWallet();
         return wallet.getBalance();
+    }
+
+    private BigDecimal calculateRemainingBudget(BigDecimal budget, BigDecimal expenses) {
+        if (budget == null || budget.signum() == 0) {
+            return BigDecimal.ZERO;
+        }
+        return budget.subtract(expenses);
     }
 }

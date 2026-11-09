@@ -8,6 +8,7 @@ import mephi.service.UserService;
 import mephi.util.ConsoleReader;
 import mephi.view.StatView;
 
+import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
@@ -53,14 +54,14 @@ public class StatController implements Controller {
     }
 
     private void showShort() {
-        StatShort statShort = statService.getShort();
+        StatShort statShort = statService.getStatShort();
         view.printShort(statShort);
     }
 
     private void showFull() {
-        StatFull statFull = statService.getFull();
-        StatShort totalSummary = statService.getShort();
-        view.printFullStats(statFull, totalSummary);
+        Wallet wallet = userService.getWallet();
+        StatFull statFull = statService.getStatFull();
+        view.printFullStats(statFull, wallet.getBalance());
     }
 
     private void showByCategory() {
@@ -73,8 +74,7 @@ public class StatController implements Controller {
                 .mapToObj(i -> categories.get(i - 1).getId())
                 .toArray(UUID[]::new);
 
-        StatFull statFull = statService.getByCategories(categoriesIdChoice);
-        StatShort totalSummary = statService.getShort();
-        view.printFullStats(statFull, totalSummary);
+        StatFull statFull = statService.getStatFullByCategories(categoriesIdChoice);
+        view.printFullStats(statFull, wallet.getBalance());
     }
 }

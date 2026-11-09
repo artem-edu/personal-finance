@@ -4,6 +4,7 @@ import com.github.freva.asciitable.AsciiTable;
 import mephi.model.*;
 import mephi.util.DateFormatter;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -17,9 +18,10 @@ public class StatView {
     }
 
     public void printShort(StatShort statShort) {
-        System.out.printf("\nОбщий доход: %,.2f руб.\n", statShort.stat().income());
-        System.out.printf("Общие расходы: %,.2f руб.\n", statShort.stat().expenses());
-        System.out.printf("Текущий баланс: %,.2f руб.\n", statShort.currentBalance());
+        System.out.println("[ Итого ]");
+        System.out.printf("Доход: %,.2f руб.\n", statShort.stat().income());
+        System.out.printf("Расходы: %,.2f руб.\n\n", statShort.stat().expenses());
+        System.out.printf("Текущий баланс кошелька: %,.2f руб.\n", statShort.currentBalance());
     }
 
     public void printCategoryList(List<Category> categories) {
@@ -29,7 +31,7 @@ public class StatView {
         }
     }
 
-    public void printFullStats(StatFull statFull, StatShort totalSummary) {
+    public void printFullStats(StatFull statFull, BigDecimal currentBalance) {
         String[] categoriesHeaders = {"Категория", "Бюджет", "Оставшийся бюджет", "Только для пополнение", "Доход", "Расход", "Транзакции"};
         String[] transactionsHeader = {"Операция", "Сумма", "Дата"};
         List<String[]> categoriesRows = new ArrayList<>();
@@ -59,7 +61,7 @@ public class StatView {
         System.out.println();
         System.out.println(AsciiTable.getTable(categoriesHeaders, categoriesRows.toArray(new String[0][0])));
         
-        printShort(totalSummary);
+        printShort(new StatShort(statFull.total(), currentBalance));
     }
 
     public void printUnknownAction() {

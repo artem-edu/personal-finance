@@ -3,7 +3,7 @@ package mephi.model;
 import java.math.BigDecimal;
 import java.util.List;
 
-public record StatByCategory(
+public record StatFullByCategory(
         Category category,
         Stat stat,
         BigDecimal remainingBudget,

@@ -4,7 +4,7 @@ import mephi.dto.request.CreateTransaction;
 import mephi.dto.response.TransactionResult;
 import mephi.exception.PersonalFinanceException;
 import mephi.model.Category;
-import mephi.model.StatByCategory;
+import mephi.model.StatFullByCategory;
 import mephi.model.Transaction;
 import mephi.model.Wallet;
 import mephi.model.enums.TransactionType;
@@ -53,8 +53,8 @@ public class TransactionService {
         Transaction transaction = new Transaction(dto.categoryId(), wallet.getId(), dto.type(), dto.amount());
         transactionRepository.save(transaction);
         walletRepository.update(wallet);
-        StatByCategory statByCategory = statService.getStatByCategory(dto.categoryId());
-        boolean isLimitExceeded = statByCategory.remainingBudget().signum() < 0;
+        StatFullByCategory statFullByCategory = statService.getStatFullByCategory(dto.categoryId());
+        boolean isLimitExceeded = statFullByCategory.remainingBudget().signum() < 0;
 
         return new TransactionResult(transaction, isLimitExceeded);
     }
