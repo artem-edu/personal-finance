@@ -3,6 +3,7 @@ package mephi.service;
 import com.opencsv.CSVWriter;
 import com.opencsv.bean.StatefulBeanToCsv;
 import com.opencsv.bean.StatefulBeanToCsvBuilder;
+import mephi.dto.request.CreateReport;
 import mephi.exception.PersonalFinanceException;
 import mephi.model.StatFullByCategory;
 import mephi.model.report.CategoriesStatReport;
@@ -17,10 +18,10 @@ import java.util.List;
 import java.util.Locale;
 
 public class ReportService {
-    public void byCategories(List<StatFullByCategory> categoriesStat, String name) {
+    public void byCategories(CreateReport<List<StatFullByCategory>> dto) {
         List<CategoriesStatReport> data = new ArrayList<>();
 
-        categoriesStat.forEach(item -> {
+        dto.data().forEach(item -> {
             data.add(new CategoriesStatReport(
                     item.category().getName(),
                     item.category().getBudget(),
@@ -34,7 +35,7 @@ public class ReportService {
         LocalDate now = LocalDate.now();
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
         String dateStr = now.format(formatter);
-        String reportName = String.format("%s_%s.csv", name, dateStr);
+        String reportName = String.format("%s_%s.csv", dto.name(), dateStr);
 
 
         try (FileOutputStream fos = new FileOutputStream(reportName);

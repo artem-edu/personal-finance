@@ -1,6 +1,7 @@
 package mephi.controller;
 
 import mephi.core.Controller;
+import mephi.dto.request.CreateReport;
 import mephi.model.*;
 import mephi.service.CategoryService;
 import mephi.service.ReportService;
@@ -84,7 +85,8 @@ public class StatController implements Controller {
 
     private void getReport() {
         StatFull statFull = statService.getStatFull();
-        reportService.byCategories(statFull.stats(), "test.cvs");
+        String name = ConsoleReader.readString("Ведите имя отчета:");
+        reportService.byCategories(new CreateReport<>(statFull.stats(), name));
     }
 
 }

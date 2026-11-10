@@ -8,6 +8,7 @@ import mephi.repository.CategoryRepository;
 import mephi.repository.WalletRepository;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 public class CategoryService {
@@ -20,9 +21,14 @@ public class CategoryService {
     }
 
     public void create(CreateCategory dto) {
-        // TODO: добавить проверку на существующую категорию
         Wallet wallet = walletRepository.findByUserId(dto.userId())
                 .orElseThrow(() -> new PersonalFinanceException("Кошелек не найден"));
+
+        Optional<Category> foundCategory = categoryRepository.findByWalletAndName(wallet.getId(), dto.name());
+
+        if (foundCategory.isPresent()) {
+            throw new PersonalFinanceException("Категория уже существует");
+        }
 
         Category category = new Category(dto.name(), wallet.getId(), dto.budget(), dto.isDepositOnly());
         categoryRepository.save(category);
