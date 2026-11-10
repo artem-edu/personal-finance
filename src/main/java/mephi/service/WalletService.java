@@ -15,13 +15,6 @@ public class WalletService {
         this.walletRepository = walletRepository;
     }
 
-    public Wallet create(UUID userId) {
-        Wallet wallet = new Wallet(userId);
-        walletRepository.save(wallet);
-
-        return wallet;
-    }
-
     public BigDecimal getBalance(UUID userId) {
         Optional<Wallet> wallet = walletRepository.findByUserId(userId);
         if (wallet.isEmpty()) {

@@ -19,7 +19,7 @@ public class Category {
         this.isDepositOnly = isDepositOnly;
     }
 
-    private Category(UUID id, String name, UUID walletId, BigDecimal budget, boolean isDepositOnly) {
+    public Category(UUID id, String name, UUID walletId, BigDecimal budget, boolean isDepositOnly) {
         this.id = id;
         this.name = name;
         this.walletId = walletId;
