@@ -24,8 +24,8 @@ jobs:
       - name: Run Checkstyle
         run: mvn checkstyle:check
 
+      - name: Run tests and Check coverage (min 50%)
+        run: mvn test jacoco:check
+
       - name: Build with Maven
         run: mvn clean package -DskipTests
-
-      - name: Check test coverage (min 50%)
-        run: mvn jacoco:check
