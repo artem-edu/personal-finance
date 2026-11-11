@@ -18,6 +18,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.math.BigDecimal;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -182,5 +183,21 @@ public class TransactionServiceTest {
         verify(wallet, never()).withdraw(any());
         verifyNoInteractions(transactionRepository, statService);
         verify(walletRepository, never()).update(any());
+    }
+
+    @Test
+    void getAllByWalletIdSuccess() {
+        UUID walletId = UUID.randomUUID();
+        Transaction transaction = mock(Transaction.class);
+        List<Transaction> transactions = List.of(transaction);
+
+        when(transactionRepository.findByWalletId(walletId)).thenReturn(transactions);
+
+        List<Transaction> result = transactionService.getAllByWalletId(walletId);
+
+        assertNotNull(result);
+        assertEquals(1, result.size());
+        assertEquals(transaction, result.get(0));
+        verify(transactionRepository, times(1)).findByWalletId(walletId);
     }
 }

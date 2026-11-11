@@ -24,7 +24,7 @@ public class CategoryView {
     }
 
     public void createSuccess(String name) {
-        System.out.printf("\nКатегория %s успешно создана.", name);
+        System.out.printf("\nКатегория %s успешно создана.\n", name);
     }
 
     public void printCategoriesListHeader() {

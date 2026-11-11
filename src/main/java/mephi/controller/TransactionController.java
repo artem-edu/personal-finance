@@ -1,12 +1,15 @@
 package mephi.controller;
 
 import mephi.core.Controller;
+import mephi.dto.request.CreateReport;
 import mephi.dto.request.CreateTransaction;
 import mephi.dto.response.TransactionResult;
 import mephi.model.Category;
+import mephi.model.Transaction;
 import mephi.model.Wallet;
 import mephi.model.enums.TransactionType;
 import mephi.service.CategoryService;
+import mephi.service.ReportService;
 import mephi.service.TransactionService;
 import mephi.service.UserService;
 import mephi.util.ConsoleReader;
@@ -20,17 +23,20 @@ public class TransactionController implements Controller {
     private final TransactionService transactionService;
     private final CategoryService categoryService;
     private final TransactionView view;
+    private final ReportService reportService;
 
     public TransactionController(
             UserService userService,
             TransactionService transactionService,
             CategoryService categoryService,
-            TransactionView view
+            TransactionView view,
+            ReportService reportService
     ) {
         this.userService = userService;
         this.transactionService = transactionService;
         this.categoryService = categoryService;
         this.view = view;
+        this.reportService = reportService;
     }
 
     @Override
@@ -50,6 +56,7 @@ public class TransactionController implements Controller {
         switch (action) {
             case "help" -> help();
             case "create" -> create(wallet);
+            case "report" -> getReport();
             default -> view.printUnknownAction();
         }
     }
@@ -84,5 +91,12 @@ public class TransactionController implements Controller {
         if (result.isLimitExceeded()) {
             view.printLimitExceededWarning(category.getName());
         }
+    }
+
+    private void getReport() {
+        Wallet wallet = userService.getWallet();
+        List<Transaction> transactions = transactionService.getAllByWalletId(wallet.getId());
+        String name = ConsoleReader.readString("Ведите имя отчета:");
+        reportService.byTransactions(new CreateReport<>(transactions, name));
     }
 }

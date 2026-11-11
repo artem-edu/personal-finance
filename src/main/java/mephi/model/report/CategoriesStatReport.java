@@ -1,35 +1,24 @@
 package mephi.model.report;
 
 import com.opencsv.bean.CsvBindByName;
-import com.opencsv.bean.CsvBindByPosition;
-import com.opencsv.bean.CsvNumber;
 
 import java.math.BigDecimal;
 
 public class CategoriesStatReport {
-    @CsvBindByPosition(position = 0)
     @CsvBindByName(column = "Категория")
     private String categoryName;
 
-    @CsvBindByPosition(position = 1)
-    @CsvBindByName(column = "Бюджет руб.")
-    @CsvNumber(value = "0.00")
-    private BigDecimal budget;
+    @CsvBindByName(column = "Бюджет")
+    private String budget;
 
-    @CsvBindByPosition(position = 2)
     @CsvBindByName(column = "Оставшийся бюджет руб.")
-    @CsvNumber(value = "0.00")
-    private BigDecimal remainingBudget;
+    private String remainingBudget;
 
-    @CsvBindByPosition(position = 3)
-    @CsvBindByName(column = "Доход руб.")
-    @CsvNumber(value = "0.00")
-    private BigDecimal income;
+    @CsvBindByName(column = "Доход")
+    private String income;
 
-    @CsvBindByPosition(position = 4)
-    @CsvBindByName(column = "Расход руб.")
-    @CsvNumber(value = "0.00")
-    private BigDecimal expenses;
+    @CsvBindByName(column = "Расход")
+    private String expenses;
 
     public CategoriesStatReport(
             String categoryName,
@@ -39,9 +28,9 @@ public class CategoriesStatReport {
             BigDecimal expenses
     ) {
         this.categoryName = categoryName;
-        this.budget = budget;
-        this.remainingBudget = remainingBudget;
-        this.income = income;
-        this.expenses = expenses;
+        this.budget = String.format("%,.2f руб.", budget);
+        this.remainingBudget = String.format("%,.2f руб.", remainingBudget);;
+        this.income = String.format("%,.2f руб.", income);
+        this.expenses = String.format("%,.2f руб.", expenses);
     }
 }

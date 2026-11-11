@@ -3,14 +3,14 @@ package mephi.service;
 import mephi.dto.request.CreateTransaction;
 import mephi.dto.response.TransactionResult;
 import mephi.exception.PersonalFinanceException;
-import mephi.model.Category;
-import mephi.model.StatFullByCategory;
-import mephi.model.Transaction;
-import mephi.model.Wallet;
+import mephi.model.*;
 import mephi.model.enums.TransactionType;
 import mephi.repository.CategoryRepository;
 import mephi.repository.TransactionRepository;
 import mephi.repository.WalletRepository;
+
+import java.util.List;
+import java.util.UUID;
 
 public class TransactionService {
     private final TransactionRepository transactionRepository;
@@ -57,5 +57,9 @@ public class TransactionService {
         boolean isLimitExceeded = statFullByCategory.remainingBudget().signum() < 0;
 
         return new TransactionResult(transaction, isLimitExceeded);
+    }
+
+    public List<Transaction> getAllByWalletId(UUID walletId) {
+        return transactionRepository.findByWalletId(walletId);
     }
 }

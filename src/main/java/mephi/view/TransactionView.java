@@ -10,6 +10,7 @@ public class TransactionView {
         System.out.println("\n[ Транзакции ]");
         String format = "\t %-25s - %s\n";
         System.out.printf(format, "transaction create", "создать транзакцию");
+        System.out.printf(format, "transaction report", "выгрузить cvs отчет");
     }
 
     public void printUnknownAction() {

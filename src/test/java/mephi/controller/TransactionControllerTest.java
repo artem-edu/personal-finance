@@ -1,5 +1,6 @@
 package mephi.controller;
 
+import mephi.dto.request.CreateReport;
 import mephi.dto.request.CreateTransaction;
 import mephi.dto.response.TransactionResult;
 import mephi.model.Category;
@@ -7,6 +8,7 @@ import mephi.model.Transaction;
 import mephi.model.Wallet;
 import mephi.model.enums.TransactionType;
 import mephi.service.CategoryService;
+import mephi.service.ReportService;
 import mephi.service.TransactionService;
 import mephi.service.UserService;
 import mephi.util.ConsoleReader;
@@ -36,6 +38,8 @@ public class TransactionControllerTest {
     private CategoryService categoryService;
     @Mock
     private TransactionView view;
+    @Mock
+    private ReportService reportService;
 
     @InjectMocks
     private TransactionController transactionController;
@@ -147,6 +151,38 @@ public class TransactionControllerTest {
 
             verify(view, times(1)).printTransactionSuccess();
             verify(view, times(1)).printLimitExceededWarning("Продукты");
+        }
+    }
+
+    @Test
+    public void reportSuccess() {
+        UUID userId = UUID.randomUUID();
+        Wallet wallet = new Wallet(userId);
+        Category category = new Category("Продукты", wallet.getId(), BigDecimal.valueOf(1000), false);
+        Transaction transaction = new Transaction(
+                category.getId(),
+                wallet.getId(),
+                TransactionType.WITHDRAWAL,
+                BigDecimal.valueOf(500)
+        );
+        List<Transaction> transactions = List.of(transaction);
+        when(userService.getWallet()).thenReturn(wallet);
+        when(transactionService.getAllByWalletId(wallet.getId())).thenReturn(transactions);
+
+        try (MockedStatic<ConsoleReader> mockedReader = mockStatic(ConsoleReader.class)) {
+            mockedReader.when(() -> ConsoleReader.readString("Ведите имя отчета:")).thenReturn("Мой отчет");
+
+            transactionController.handleCommand(List.of("report"));
+
+            ArgumentCaptor<CreateReport<List<Transaction>>> reportCaptor =
+                    ArgumentCaptor.forClass(CreateReport.class);
+            verify(reportService, times(1)).byTransactions(reportCaptor.capture());
+
+            CreateReport<List<Transaction>> report = reportCaptor.getValue();
+            assertEquals(transactions, report.data());
+            assertEquals("Мой отчет", report.name());
+
+            verify(transactionService, never()).create(any(CreateTransaction.class));
         }
     }
 }
