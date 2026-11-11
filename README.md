@@ -120,6 +120,13 @@ mvn clean package
 ```bash
 mvn exec:java -Dexec.mainClass="mephi.Main"
 ```
+Сборка и запуск через podman (docker)
+```bash                                                                                                                                                                                                 
+ podman build -t personal-finance .                                                                                                                                                                    
+                                                                                                                                                                                                       
+ mkdir -p data                                                                                                                                                                                         
+ podman run -it --rm -v $(pwd)/data:/data:Z personal-finance                                                                                                                                           
+```
 ---
 ## Справка по командам
 
