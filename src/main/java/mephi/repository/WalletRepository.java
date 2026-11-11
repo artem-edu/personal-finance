@@ -15,7 +15,11 @@ public class WalletRepository extends FileRepository<UUID, Wallet> {
     private final Map<UUID, UUID> walletIndex = new ConcurrentHashMap<>();
 
     public WalletRepository() {
-        super(FILE_DB, new TypeToken<ConcurrentHashMap<UUID, Wallet>>() {
+        this(FILE_DB);
+    }
+
+    public WalletRepository(String filedDb) {
+        super(filedDb, new TypeToken<ConcurrentHashMap<UUID, Wallet>>() {
         });
         loadFromFile();
     }

@@ -12,7 +12,11 @@ public class CategoryRepository extends FileRepository<UUID, Category> {
     private static final String FILE_DB = "db/categories.json";
 
     public CategoryRepository() {
-        super(FILE_DB, new TypeToken<ConcurrentHashMap<UUID, Category>>() {
+        this(FILE_DB);
+    }
+
+    public CategoryRepository(String fileDb) {
+        super(fileDb, new TypeToken<ConcurrentHashMap<UUID, Category>>() {
         });
         loadFromFile();
     }

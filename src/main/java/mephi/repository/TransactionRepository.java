@@ -15,7 +15,11 @@ public class TransactionRepository extends FileRepository<UUID, Transaction> {
     private static final String FILE_DB = "db/transactions.json";
 
     public TransactionRepository() {
-        super(FILE_DB, new TypeToken<>() {
+        this(FILE_DB);
+    }
+
+    public TransactionRepository(String fileDb) {
+        super(fileDb, new TypeToken<>() {
         });
         loadFromFile();
     }

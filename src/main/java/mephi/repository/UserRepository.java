@@ -16,7 +16,11 @@ public class UserRepository extends FileRepository<UUID, User> {
     private final Map<String, UUID> loginIndex = new ConcurrentHashMap<>();
 
     public UserRepository() {
-        super(FILE_DB, new TypeToken<ConcurrentHashMap<UUID, User>>() {
+        this(FILE_DB);
+    }
+
+    public UserRepository(String fileDb) {
+        super(fileDb, new TypeToken<ConcurrentHashMap<UUID, User>>() {
         });
         this.loadFromFile();
     }
