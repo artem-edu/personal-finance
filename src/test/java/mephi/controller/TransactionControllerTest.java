@@ -78,27 +78,28 @@ public class TransactionControllerTest {
         when(transactionService.create(any(CreateTransaction.class)))
                 .thenReturn(new TransactionResult(transaction, false));
 
-        MockedStatic<ConsoleReader> mockedReader = mockStatic(ConsoleReader.class);
-        mockedReader.when(() -> ConsoleReader.readInt("Категория", 0, 1)).thenReturn(1);
-        mockedReader.when(() -> ConsoleReader.readInt("Тип транзакции", 1, TransactionType.size())).thenReturn(1);
-        mockedReader.when(() -> ConsoleReader.readInt("Сумма")).thenReturn(500);
+        try(MockedStatic<ConsoleReader> mockedReader = mockStatic(ConsoleReader.class)) {
+            mockedReader.when(() -> ConsoleReader.readInt("Категория", 0, 1)).thenReturn(1);
+            mockedReader.when(() -> ConsoleReader.readInt("Тип транзакции", 1, TransactionType.size())).thenReturn(1);
+            mockedReader.when(() -> ConsoleReader.readInt("Сумма")).thenReturn(500);
 
-        transactionController.handleCommand(List.of("create"));
+            transactionController.handleCommand(List.of("create"));
 
-        ArgumentCaptor<CreateTransaction> dtoCaptor = ArgumentCaptor.forClass(CreateTransaction.class);
-        verify(transactionService, times(1)).create(dtoCaptor.capture());
+            ArgumentCaptor<CreateTransaction> dtoCaptor = ArgumentCaptor.forClass(CreateTransaction.class);
+            verify(transactionService, times(1)).create(dtoCaptor.capture());
 
-        CreateTransaction dto = dtoCaptor.getValue();
-        assertEquals(category.getId(), dto.categoryId());
-        assertEquals(wallet.getId(), dto.walletId());
-        assertEquals(TransactionType.WITHDRAWAL, dto.type());
-        assertEquals(BigDecimal.valueOf(500), dto.amount());
+            CreateTransaction dto = dtoCaptor.getValue();
+            assertEquals(category.getId(), dto.categoryId());
+            assertEquals(wallet.getId(), dto.walletId());
+            assertEquals(TransactionType.WITHDRAWAL, dto.type());
+            assertEquals(BigDecimal.valueOf(500), dto.amount());
 
-        verify(view, times(1)).printCreateHeder();
-        verify(view, times(1)).printCategoryList(List.of(category));
-        verify(view, times(1)).printTransactions(TransactionType.values());
-        verify(view, times(1)).printTransactionSuccess();
-        verify(view, never()).printLimitExceededWarning(anyString());
+            verify(view, times(1)).printCreateHeder();
+            verify(view, times(1)).printCategoryList(List.of(category));
+            verify(view, times(1)).printTransactions(TransactionType.values());
+            verify(view, times(1)).printTransactionSuccess();
+            verify(view, never()).printLimitExceededWarning(anyString());
+        }
     }
 
     @Test
@@ -137,15 +138,15 @@ public class TransactionControllerTest {
         when(categoryService.getCategoriesByUserId(userId)).thenReturn(List.of(category));
         when(transactionService.create(any(CreateTransaction.class)))
                 .thenReturn(new TransactionResult(transaction, true));
-        MockedStatic<ConsoleReader> mockedReader = mockStatic(ConsoleReader.class);
+        try(MockedStatic<ConsoleReader> mockedReader = mockStatic(ConsoleReader.class)) {
+            mockedReader.when(() -> ConsoleReader.readInt("Категория", 0, 1)).thenReturn(1);
+            mockedReader.when(() -> ConsoleReader.readInt("Тип транзакции", 1, TransactionType.size())).thenReturn(1);
+            mockedReader.when(() -> ConsoleReader.readInt("Сумма")).thenReturn(1500);
 
-        mockedReader.when(() -> ConsoleReader.readInt("Категория", 0, 1)).thenReturn(1);
-        mockedReader.when(() -> ConsoleReader.readInt("Тип транзакции", 1, TransactionType.size())).thenReturn(1);
-        mockedReader.when(() -> ConsoleReader.readInt("Сумма")).thenReturn(1500);
+            transactionController.handleCommand(List.of("create"));
 
-        transactionController.handleCommand(List.of("create"));
-
-        verify(view, times(1)).printTransactionSuccess();
-        verify(view, times(1)).printLimitExceededWarning("Продукты");
+            verify(view, times(1)).printTransactionSuccess();
+            verify(view, times(1)).printLimitExceededWarning("Продукты");
+        }
     }
 }

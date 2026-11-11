@@ -110,39 +110,40 @@ public class StatControllerTest {
         when(userService.getWallet()).thenReturn(wallet);
         when(categoryService.getCategoriesByUserId(wallet.getUserId())).thenReturn(categories);
         when(statService.getStatFullByCategories(any(UUID[].class))).thenReturn(statFull);
-        MockedStatic<ConsoleReader> mockedReader = mockStatic(ConsoleReader.class);
-        mockedReader.when(() -> ConsoleReader.readIns("Категории (ввод через пробел)", 1, 1))
-                .thenReturn(new int[]{1});
+        try(MockedStatic<ConsoleReader> mockedReader = mockStatic(ConsoleReader.class)) {
+            mockedReader.when(() -> ConsoleReader.readIns("Категории (ввод через пробел)", 1, 1))
+                    .thenReturn(new int[]{1});
 
-        statController.handleCommand(List.of("category"));
+            statController.handleCommand(List.of("category"));
 
-        ArgumentCaptor<UUID[]> categoriesIdCaptor = ArgumentCaptor.forClass(UUID[].class);
-        verify(statService, times(1)).getStatFullByCategories(categoriesIdCaptor.capture());
+            ArgumentCaptor<UUID[]> categoriesIdCaptor = ArgumentCaptor.forClass(UUID[].class);
+            verify(statService, times(1)).getStatFullByCategories(categoriesIdCaptor.capture());
 
-        UUID[] categoriesId = categoriesIdCaptor.getValue();
-        assertEquals(1, categoriesId.length);
-        assertEquals(category.getId(), categoriesId[0]);
+            UUID[] categoriesId = categoriesIdCaptor.getValue();
+            assertEquals(1, categoriesId.length);
+            assertEquals(category.getId(), categoriesId[0]);
 
-        verify(view, times(1)).printCategoryList(categories);
-        verify(view, times(1)).printFullStats(statFull, wallet.getBalance());
+            verify(view, times(1)).printCategoryList(categories);
+            verify(view, times(1)).printFullStats(statFull, wallet.getBalance());
+        }
     }
 
     @Test
     public void reportSuccess() {
         StatFull statFull = new StatFull(List.of(), new Stat(BigDecimal.ZERO, BigDecimal.ZERO));
         when(statService.getStatFull()).thenReturn(statFull);
-        MockedStatic<ConsoleReader> mockedReader = mockStatic(ConsoleReader.class);
+        try (MockedStatic<ConsoleReader> mockedReader = mockStatic(ConsoleReader.class)) {
+            mockedReader.when(() -> ConsoleReader.readString("Ведите имя отчета:")).thenReturn("Мой отчет");
 
-        mockedReader.when(() -> ConsoleReader.readString("Ведите имя отчета:")).thenReturn("Мой отчет");
+            statController.handleCommand(List.of("report"));
 
-        statController.handleCommand(List.of("report"));
+            ArgumentCaptor<CreateReport<List<StatFullByCategory>>> reportCaptor =
+                    ArgumentCaptor.forClass(CreateReport.class);
+            verify(reportService, times(1)).byCategories(reportCaptor.capture());
 
-        ArgumentCaptor<CreateReport<List<StatFullByCategory>>> reportCaptor =
-                ArgumentCaptor.forClass(CreateReport.class);
-        verify(reportService, times(1)).byCategories(reportCaptor.capture());
-
-        CreateReport<List<mephi.model.StatFullByCategory>> report = reportCaptor.getValue();
-        assertEquals(statFull.stats(), report.data());
-        assertEquals("Мой отчет", report.name());
+            CreateReport<List<mephi.model.StatFullByCategory>> report = reportCaptor.getValue();
+            assertEquals(statFull.stats(), report.data());
+            assertEquals("Мой отчет", report.name());
+        }
     }
 }

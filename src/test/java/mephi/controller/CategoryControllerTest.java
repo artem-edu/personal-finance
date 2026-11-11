@@ -60,23 +60,24 @@ public class CategoryControllerTest {
         UUID userId = UUID.randomUUID();
         User user = new User(userId, "testUser", "hashedPassword");
         when(userService.getCurrentUser()).thenReturn(user);
-        MockedStatic<ConsoleReader> mockedReader = mockStatic(ConsoleReader.class);
-        mockedReader.when(() -> ConsoleReader.readString("Название")).thenReturn("Продукты");
-        mockedReader.when(() -> ConsoleReader.readBoolean("Режим только пополнения?")).thenReturn(false);
-        mockedReader.when(() -> ConsoleReader.readInt("Бюджет")).thenReturn(1000);
+        try (MockedStatic<ConsoleReader> mockedReader = mockStatic(ConsoleReader.class)) {
+            mockedReader.when(() -> ConsoleReader.readString("Название")).thenReturn("Продукты");
+            mockedReader.when(() -> ConsoleReader.readBoolean("Режим только пополнения?")).thenReturn(false);
+            mockedReader.when(() -> ConsoleReader.readInt("Бюджет")).thenReturn(1000);
 
-        categoryController.handleCommand(List.of("create"));
+            categoryController.handleCommand(List.of("create"));
 
-        ArgumentCaptor<CreateCategory> dtoCaptor = ArgumentCaptor.forClass(CreateCategory.class);
-        verify(categoryService, times(1)).create(dtoCaptor.capture());
+            ArgumentCaptor<CreateCategory> dtoCaptor = ArgumentCaptor.forClass(CreateCategory.class);
+            verify(categoryService, times(1)).create(dtoCaptor.capture());
 
-        CreateCategory dto = dtoCaptor.getValue();
-        assertEquals("Продукты", dto.name());
-        assertEquals(userId, dto.userId());
-        assertEquals(BigDecimal.valueOf(1000), dto.budget());
-        assertFalse(dto.isDepositOnly());
+            CreateCategory dto = dtoCaptor.getValue();
+            assertEquals("Продукты", dto.name());
+            assertEquals(userId, dto.userId());
+            assertEquals(BigDecimal.valueOf(1000), dto.budget());
+            assertFalse(dto.isDepositOnly());
 
-        verify(view, times(1)).createSuccess("Продукты");
+            verify(view, times(1)).createSuccess("Продукты");
+        }
     }
 
     @Test
@@ -84,23 +85,24 @@ public class CategoryControllerTest {
         UUID userId = UUID.randomUUID();
         User user = new User(userId, "testUser", "hashedPassword");
         when(userService.getCurrentUser()).thenReturn(user);
-        MockedStatic<ConsoleReader> mockedReader = mockStatic(ConsoleReader.class);
 
-        mockedReader.when(() -> ConsoleReader.readString("Название")).thenReturn("Зарплата");
-        mockedReader.when(() -> ConsoleReader.readBoolean("Режим только пополнения?")).thenReturn(true);
+        try (MockedStatic<ConsoleReader> mockedReader = mockStatic(ConsoleReader.class)) {
+            mockedReader.when(() -> ConsoleReader.readString("Название")).thenReturn("Зарплата");
+            mockedReader.when(() -> ConsoleReader.readBoolean("Режим только пополнения?")).thenReturn(true);
 
-        categoryController.handleCommand(List.of("create"));
+            categoryController.handleCommand(List.of("create"));
 
-        ArgumentCaptor<CreateCategory> dtoCaptor = ArgumentCaptor.forClass(CreateCategory.class);
-        verify(categoryService, times(1)).create(dtoCaptor.capture());
+            ArgumentCaptor<CreateCategory> dtoCaptor = ArgumentCaptor.forClass(CreateCategory.class);
+            verify(categoryService, times(1)).create(dtoCaptor.capture());
 
-        CreateCategory dto = dtoCaptor.getValue();
-        assertEquals("Зарплата", dto.name());
-        assertEquals(BigDecimal.ZERO, dto.budget());
-        assertTrue(dto.isDepositOnly());
+            CreateCategory dto = dtoCaptor.getValue();
+            assertEquals("Зарплата", dto.name());
+            assertEquals(BigDecimal.ZERO, dto.budget());
+            assertTrue(dto.isDepositOnly());
 
-        mockedReader.verify(() -> ConsoleReader.readInt("Бюджет"), never());
-        verify(view, times(1)).createSuccess("Зарплата");
+            mockedReader.verify(() -> ConsoleReader.readInt("Бюджет"), never());
+            verify(view, times(1)).createSuccess("Зарплата");
+        }
     }
 
     @Test

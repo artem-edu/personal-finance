@@ -2,9 +2,7 @@ package mephi.controller;
 
 import mephi.dto.request.LoginRequest;
 import mephi.dto.request.RegistrationRequest;
-import mephi.exception.AuthenticationException;
 import mephi.exception.PersonalFinanceException;
-import mephi.exception.UserAlreadyExistsException;
 import mephi.service.UserService;
 import mephi.util.ConsoleReader;
 import mephi.view.AuthView;
@@ -55,31 +53,33 @@ public class AuthControllerTest {
     @Test
     public void loginSuccess() {
         when(userService.isLogged()).thenReturn(false);
-        MockedStatic<ConsoleReader> mockedReader = mockStatic(ConsoleReader.class);
-        mockedReader.when(() -> ConsoleReader.readString("Логин")).thenReturn("testUser");
-        mockedReader.when(() -> ConsoleReader.readString("Пароль")).thenReturn("password123");
+        try (MockedStatic<ConsoleReader> mockedReader = mockStatic(ConsoleReader.class)) {
+            mockedReader.when(() -> ConsoleReader.readString("Логин")).thenReturn("testUser");
+            mockedReader.when(() -> ConsoleReader.readString("Пароль")).thenReturn("password123");
 
-        authController.handleCommand(List.of("login"));
+            authController.handleCommand(List.of("login"));
 
-        ArgumentCaptor<LoginRequest> requestCaptor = ArgumentCaptor.forClass(LoginRequest.class);
-        verify(userService, times(1)).login(requestCaptor.capture());
+            ArgumentCaptor<LoginRequest> requestCaptor = ArgumentCaptor.forClass(LoginRequest.class);
+            verify(userService, times(1)).login(requestCaptor.capture());
 
-        LoginRequest request = requestCaptor.getValue();
-        assertEquals("testUser", request.login());
-        assertEquals("password123", request.password());
+            LoginRequest request = requestCaptor.getValue();
+            assertEquals("testUser", request.login());
+            assertEquals("password123", request.password());
 
-        verify(view, times(1)).printLoginSuccess("testUser");
+            verify(view, times(1)).printLoginSuccess("testUser");
+        }
     }
 
     @Test
     public void loginWhenAlreadyLogged() {
         when(userService.isLogged()).thenReturn(true);
-        MockedStatic<ConsoleReader> mockedReader = mockStatic(ConsoleReader.class);
-        authController.handleCommand(List.of("login"));
+        try (MockedStatic<ConsoleReader> mockedReader = mockStatic(ConsoleReader.class)) {
+            authController.handleCommand(List.of("login"));
 
-        verify(view, times(1)).printAlreadyLogged();
-        verify(userService, never()).login(any(LoginRequest.class));
-        mockedReader.verifyNoInteractions();
+            verify(view, times(1)).printAlreadyLogged();
+            verify(userService, never()).login(any(LoginRequest.class));
+            mockedReader.verifyNoInteractions();
+        }
     }
 
     @Test
@@ -87,46 +87,47 @@ public class AuthControllerTest {
         when(userService.isLogged()).thenReturn(false);
         PersonalFinanceException exception = new PersonalFinanceException("Неверный логин или пароль");
         doThrow(exception).when(userService).login(any(LoginRequest.class));
-        MockedStatic<ConsoleReader> mockedReader = mockStatic(ConsoleReader.class);
+        try (MockedStatic<ConsoleReader> mockedReader = mockStatic(ConsoleReader.class)) {
+            mockedReader.when(() -> ConsoleReader.readString("Логин")).thenReturn("testUser");
+            mockedReader.when(() -> ConsoleReader.readString("Пароль")).thenReturn("password123");
 
-        mockedReader.when(() -> ConsoleReader.readString("Логин")).thenReturn("testUser");
-        mockedReader.when(() -> ConsoleReader.readString("Пароль")).thenReturn("password123");
+            authController.handleCommand(List.of("login"));
 
-        authController.handleCommand(List.of("login"));
-
-        verify(view, times(1)).printError(exception);
-        verify(view, never()).printLoginSuccess(anyString());
+            verify(view, times(1)).printError(exception);
+            verify(view, never()).printLoginSuccess(anyString());
+        }
     }
 
     @Test
     public void registerSuccess() {
         when(userService.isLogged()).thenReturn(false);
-        MockedStatic<ConsoleReader> mockedReader = mockStatic(ConsoleReader.class);
+        try (MockedStatic<ConsoleReader> mockedReader = mockStatic(ConsoleReader.class)) {
+            mockedReader.when(() -> ConsoleReader.readString("Логин")).thenReturn("newUser");
+            mockedReader.when(() -> ConsoleReader.readString("Пароль")).thenReturn("password123");
 
-        mockedReader.when(() -> ConsoleReader.readString("Логин")).thenReturn("newUser");
-        mockedReader.when(() -> ConsoleReader.readString("Пароль")).thenReturn("password123");
+            authController.handleCommand(List.of("reg"));
 
-        authController.handleCommand(List.of("reg"));
+            ArgumentCaptor<RegistrationRequest> requestCaptor = ArgumentCaptor.forClass(RegistrationRequest.class);
+            verify(userService, times(1)).register(requestCaptor.capture());
 
-        ArgumentCaptor<RegistrationRequest> requestCaptor = ArgumentCaptor.forClass(RegistrationRequest.class);
-        verify(userService, times(1)).register(requestCaptor.capture());
+            RegistrationRequest request = requestCaptor.getValue();
+            assertEquals("newUser", request.login());
+            assertEquals("password123", request.password());
 
-        RegistrationRequest request = requestCaptor.getValue();
-        assertEquals("newUser", request.login());
-        assertEquals("password123", request.password());
-
-        verify(view, times(1)).printRegSuccess();
+            verify(view, times(1)).printRegSuccess();
+        }
     }
 
     @Test
     public void registerWhenAlreadyLogged() {
         when(userService.isLogged()).thenReturn(true);
-        MockedStatic<ConsoleReader> mockedReader = mockStatic(ConsoleReader.class);
-        authController.handleCommand(List.of("reg"));
+        try (MockedStatic<ConsoleReader> mockedReader = mockStatic(ConsoleReader.class)) {
+            authController.handleCommand(List.of("reg"));
 
-        verify(view, times(1)).printAlreadyLogged();
-        verify(userService, never()).register(any(RegistrationRequest.class));
-        mockedReader.verifyNoInteractions();
+            verify(view, times(1)).printAlreadyLogged();
+            verify(userService, never()).register(any(RegistrationRequest.class));
+            mockedReader.verifyNoInteractions();
+        }
     }
 
     @Test
@@ -135,14 +136,15 @@ public class AuthControllerTest {
         PersonalFinanceException exception = new PersonalFinanceException("newUser");
         doThrow(exception).when(userService).register(any(RegistrationRequest.class));
 
-        MockedStatic<ConsoleReader> mockedReader = mockStatic(ConsoleReader.class);
-        mockedReader.when(() -> ConsoleReader.readString("Логин")).thenReturn("newUser");
-        mockedReader.when(() -> ConsoleReader.readString("Пароль")).thenReturn("password123");
+        try (MockedStatic<ConsoleReader> mockedReader = mockStatic(ConsoleReader.class)) {
+            mockedReader.when(() -> ConsoleReader.readString("Логин")).thenReturn("newUser");
+            mockedReader.when(() -> ConsoleReader.readString("Пароль")).thenReturn("password123");
 
-        authController.handleCommand(List.of("reg"));
+            authController.handleCommand(List.of("reg"));
 
-        verify(view, times(1)).printError(exception);
-        verify(view, never()).printRegSuccess();
+            verify(view, times(1)).printError(exception);
+            verify(view, never()).printRegSuccess();
+        }
     }
 
     @Test
