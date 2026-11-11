@@ -2,6 +2,6 @@ package mephi.exception;
 
 public class UserAlreadyExistsException extends PersonalFinanceException {
     public UserAlreadyExistsException(String message) {
-        super(message);
+        super("Логин: " + message + " занят");
     }
 }
