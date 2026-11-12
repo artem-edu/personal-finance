@@ -39,7 +39,7 @@ public class CategoryService {
         Category category = getCategoryById(dto.categoryId());
         Optional<Category> foundCategory = categoryRepository.findByWalletAndName(category.getWalletId(), dto.name());
 
-        if (foundCategory.isPresent() && foundCategory.get().getId() != dto.categoryId()) {
+        if (foundCategory.isPresent() && foundCategory.get().getId().equals(dto.categoryId())) {
             throw new PersonalFinanceException(
                     String.format("Категория '%s' уже существует", dto.name())
             );
