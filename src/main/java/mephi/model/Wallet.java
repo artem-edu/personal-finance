@@ -1,5 +1,7 @@
 package mephi.model;
 
+import mephi.exception.PersonalFinanceException;
+
 import java.math.BigDecimal;
 import java.util.UUID;
 
@@ -48,7 +50,7 @@ public class Wallet {
 
     private void assertPositive(BigDecimal amount) {
         if (amount == null || amount.signum() <= 0) {
-            throw new IllegalArgumentException("Сумма должна быть > 0");
+            throw new PersonalFinanceException("Сумма должна быть > 0");
         }
     }
 }
