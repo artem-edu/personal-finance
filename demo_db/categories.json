@@ -1,0 +1,37 @@
+{
+  "9fe999e9-5a69-4c4e-a54c-0505a22dd141": {
+    "id": "9fe999e9-5a69-4c4e-a54c-0505a22dd141",
+    "name": "Аренда квартиры",
+    "walletId": "c297e747-cb49-4f2d-bb3b-49da22a297db",
+    "budget": 60000,
+    "isDepositOnly": false
+  },
+  "2efad916-3a55-4459-8ff3-c18943d15279": {
+    "id": "2efad916-3a55-4459-8ff3-c18943d15279",
+    "name": "Зарплата",
+    "walletId": "c083f036-5c7f-4333-9ba2-052002635f7f",
+    "budget": 0,
+    "isDepositOnly": true
+  },
+  "1840bf03-ee64-4e45-a406-b5f72624a19f": {
+    "id": "1840bf03-ee64-4e45-a406-b5f72624a19f",
+    "name": "Зарплата",
+    "walletId": "c297e747-cb49-4f2d-bb3b-49da22a297db",
+    "budget": 0,
+    "isDepositOnly": true
+  },
+  "ac11a8a5-e47c-4993-92e6-6e0313acda3a": {
+    "id": "ac11a8a5-e47c-4993-92e6-6e0313acda3a",
+    "name": "Продукты",
+    "walletId": "c297e747-cb49-4f2d-bb3b-49da22a297db",
+    "budget": 20000,
+    "isDepositOnly": false
+  },
+  "dec71b2c-1248-4e80-b28c-fda768910085": {
+    "id": "dec71b2c-1248-4e80-b28c-fda768910085",
+    "name": "Рестораны",
+    "walletId": "c083f036-5c7f-4333-9ba2-052002635f7f",
+    "budget": 10000,
+    "isDepositOnly": false
+  }
+}

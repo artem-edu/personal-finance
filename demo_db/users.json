@@ -1,0 +1,12 @@
+{
+  "2db75766-3a34-468b-b78f-798b503fd237": {
+    "id": "2db75766-3a34-468b-b78f-798b503fd237",
+    "login": "user1",
+    "hasPassword": "8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92"
+  },
+  "595ccb23-6a52-4bda-8799-8601e5d4d067": {
+    "id": "595ccb23-6a52-4bda-8799-8601e5d4d067",
+    "login": "user2",
+    "hasPassword": "481f6cc0511143ccdd7e2d1b1b94faf0a700a8b49cd13922a70b5ae28acaa8c5"
+  }
+}

@@ -1,0 +1,58 @@
+{
+  "abfcde1d-ddcb-4f78-a412-af7832f56eac": {
+    "id": "abfcde1d-ddcb-4f78-a412-af7832f56eac",
+    "categoryId": "1840bf03-ee64-4e45-a406-b5f72624a19f",
+    "walletId": "c297e747-cb49-4f2d-bb3b-49da22a297db",
+    "type": "DEPOSIT",
+    "amount": 300000,
+    "createdAt": 1794509060966
+  },
+  "9d7784ee-9ef5-400c-b0c9-0ca95ff0dd73": {
+    "id": "9d7784ee-9ef5-400c-b0c9-0ca95ff0dd73",
+    "categoryId": "2efad916-3a55-4459-8ff3-c18943d15279",
+    "walletId": "c083f036-5c7f-4333-9ba2-052002635f7f",
+    "type": "DEPOSIT",
+    "amount": 70000,
+    "createdAt": 1794509518258
+  },
+  "2c476d73-ed61-4435-980d-6926d3e6478e": {
+    "id": "2c476d73-ed61-4435-980d-6926d3e6478e",
+    "categoryId": "dec71b2c-1248-4e80-b28c-fda768910085",
+    "walletId": "c083f036-5c7f-4333-9ba2-052002635f7f",
+    "type": "WITHDRAWAL",
+    "amount": 7300,
+    "createdAt": 1794509538943
+  },
+  "113a97e0-97c4-4925-a7bd-5982fd971a2a": {
+    "id": "113a97e0-97c4-4925-a7bd-5982fd971a2a",
+    "categoryId": "ac11a8a5-e47c-4993-92e6-6e0313acda3a",
+    "walletId": "c297e747-cb49-4f2d-bb3b-49da22a297db",
+    "type": "WITHDRAWAL",
+    "amount": 987,
+    "createdAt": 1794509082808
+  },
+  "fec95d7e-79f9-42a1-8734-f1b6f359131f": {
+    "id": "fec95d7e-79f9-42a1-8734-f1b6f359131f",
+    "categoryId": "ac11a8a5-e47c-4993-92e6-6e0313acda3a",
+    "walletId": "c297e747-cb49-4f2d-bb3b-49da22a297db",
+    "type": "WITHDRAWAL",
+    "amount": 1000,
+    "createdAt": 1794509072820
+  },
+  "2a80b8bc-6eb9-4c01-9772-e76e66871774": {
+    "id": "2a80b8bc-6eb9-4c01-9772-e76e66871774",
+    "categoryId": "2efad916-3a55-4459-8ff3-c18943d15279",
+    "walletId": "c083f036-5c7f-4333-9ba2-052002635f7f",
+    "type": "DEPOSIT",
+    "amount": 10000,
+    "createdAt": 1794509527737
+  },
+  "32e815f7-3dfb-4a51-b200-2d2cc31d478b": {
+    "id": "32e815f7-3dfb-4a51-b200-2d2cc31d478b",
+    "categoryId": "ac11a8a5-e47c-4993-92e6-6e0313acda3a",
+    "walletId": "c297e747-cb49-4f2d-bb3b-49da22a297db",
+    "type": "WITHDRAWAL",
+    "amount": 5490,
+    "createdAt": 1794509106175
+  }
+}
