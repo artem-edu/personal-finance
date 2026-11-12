@@ -1,6 +1,7 @@
 package mephi.service;
 
 import mephi.dto.request.CreateCategory;
+import mephi.dto.request.EditCategory;
 import mephi.exception.PersonalFinanceException;
 import mephi.model.Category;
 import mephi.model.Wallet;
@@ -31,6 +32,23 @@ public class CategoryService {
         }
 
         Category category = new Category(dto.name(), wallet.getId(), dto.budget(), dto.isDepositOnly());
+        categoryRepository.save(category);
+    }
+
+    public void update(EditCategory dto) {
+        Category category = getCategoryById(dto.categoryId());
+        Optional<Category> foundCategory = categoryRepository.findByWalletAndName(category.getWalletId(), dto.name());
+
+        if (foundCategory.isPresent() && foundCategory.get().getId() != dto.categoryId()) {
+            throw new PersonalFinanceException(
+                    String.format("Категория '%s' уже существует", dto.name())
+            );
+        }
+
+        category.setName(dto.name());
+        category.setBudget(dto.budget());
+        category.setIsDepositOnly(dto.isDepositOnly());
+
         categoryRepository.save(category);
     }
 

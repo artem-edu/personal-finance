@@ -59,7 +59,7 @@ public class UserServiceTest {
             userService.register(request);
         });
 
-        assertEquals("existingUser", exception.getMessage());
+        assertEquals("Логин: existingUser занят", exception.getMessage());
         verify(userRepository, never()).create(any());
         verify(walletRepository, never()).save(any());
     }

@@ -1,6 +1,7 @@
 package mephi.service;
 
 import mephi.dto.request.CreateCategory;
+import mephi.dto.request.EditCategory;
 import mephi.exception.PersonalFinanceException;
 import mephi.model.Category;
 import mephi.model.Wallet;
@@ -80,6 +81,45 @@ public class CategoryServiceTest {
         });
 
         assertEquals("Категория уже существует", ex.getMessage());
+        verify(categoryRepository, never()).save(any(Category.class));
+    }
+
+    @Test
+    public void updateSuccess() {
+        UUID categoryId = UUID.randomUUID();
+        UUID walletId = UUID.randomUUID();
+        Category mockCategory = new Category(categoryId, "Продукты", walletId, BigDecimal.valueOf(1000), false);
+        EditCategory dto = new EditCategory(categoryId, "Продукты новые", BigDecimal.valueOf(2000), true);
+
+        when(categoryRepository.findById(categoryId)).thenReturn(Optional.of(mockCategory));
+        when(categoryRepository.findByWalletAndName(walletId, dto.name())).thenReturn(Optional.empty());
+
+        categoryService.update(dto);
+
+        assertEquals(dto.name(), mockCategory.getName());
+        assertEquals(dto.budget(), mockCategory.getBudget());
+        assertEquals(dto.isDepositOnly(), mockCategory.getIsDepositOnly());
+
+        verify(categoryRepository, times(1)).findById(categoryId);
+        verify(categoryRepository, times(1)).save(mockCategory);
+    }
+
+    @Test
+    public void updateCategoryExistException() {
+        UUID categoryId = UUID.randomUUID();
+        UUID walletId = UUID.randomUUID();
+        Category mockCategory = new Category(categoryId, "Продукты", walletId, BigDecimal.valueOf(1000), false);
+        Category otherCategory = new Category(UUID.randomUUID(), "Продукты", walletId, BigDecimal.valueOf(500), false);
+        EditCategory dto = new EditCategory(categoryId, "Продукты", BigDecimal.valueOf(2000), false);
+
+        when(categoryRepository.findById(categoryId)).thenReturn(Optional.of(mockCategory));
+        when(categoryRepository.findByWalletAndName(walletId, dto.name())).thenReturn(Optional.of(otherCategory));
+
+        PersonalFinanceException ex = assertThrows(PersonalFinanceException.class, () -> {
+            categoryService.update(dto);
+        });
+
+        assertEquals("Категория 'Продукты' уже существует", ex.getMessage());
         verify(categoryRepository, never()).save(any(Category.class));
     }
 

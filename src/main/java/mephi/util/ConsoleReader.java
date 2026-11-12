@@ -16,12 +16,17 @@ public class ConsoleReader {
         System.out.print(prompt + ": ");
         while (true) {
             try {
-                return Integer.parseInt(scanner.nextLine().trim());
+                String value = scanner.nextLine().trim();
+                if (value.isEmpty()) {
+                    return 0;
+                }
+                return Integer.parseInt(value);
             } catch (NumberFormatException e) {
                 System.out.print(prompt + ": ");
             }
         }
     }
+
     public static int readInt(String prompt, int min, int max) {
         System.out.print(prompt + ": ");
         while (true) {
@@ -84,6 +89,17 @@ public class ConsoleReader {
     public static Boolean readBoolean(String prompt) {
         System.out.print(prompt + "(д/н): ");
         String input = scanner.nextLine().trim().toLowerCase();
+
+        return input.startsWith("д") || input.startsWith("y");
+    }
+
+    public static Boolean readBoolean(String prompt, boolean defaultValue) {
+        System.out.print(prompt + "(д/н): ");
+        String input = scanner.nextLine().trim().toLowerCase();
+
+        if (input.isEmpty()) {
+            return defaultValue;
+        }
 
         return input.startsWith("д") || input.startsWith("y");
     }

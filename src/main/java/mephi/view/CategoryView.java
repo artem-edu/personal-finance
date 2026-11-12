@@ -47,4 +47,19 @@ public class CategoryView {
         System.out.println();
         System.out.println(AsciiTable.getTable(tableHeaders, tableRows.toArray(new String[0][0])));
     }
+
+    public void printEditHeader() {
+        System.out.println("\n [Редактирование категории ]");
+    }
+
+    public void printCategoryList(List<Category> categories) {
+        for (int i = 0; i < categories.size(); i++) {
+            System.out.printf("%d) %s\n", i + 1, categories.get(i).getName());
+        }
+    }
+
+    public void updateSuccess(String name) {
+        System.out.printf("\nКатегория %s успешно сохранена.\n", name);
+    }
+
 }

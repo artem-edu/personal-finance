@@ -1,6 +1,7 @@
 package mephi.controller;
 
 import mephi.dto.request.CreateCategory;
+import mephi.dto.request.EditCategory;
 import mephi.model.Category;
 import mephi.model.User;
 import mephi.service.CategoryService;
@@ -102,6 +103,37 @@ public class CategoryControllerTest {
 
             mockedReader.verify(() -> ConsoleReader.readInt("Бюджет"), never());
             verify(view, times(1)).createSuccess("Зарплата");
+        }
+    }
+
+    @Test
+    public void editSuccess() {
+        UUID userId = UUID.randomUUID();
+        User user = new User(userId, "testUser", "hashedPassword");
+        List<Category> categories = List.of(new Category("Продукты", UUID.randomUUID(), BigDecimal.valueOf(1000), false), new Category("Подписки", UUID.randomUUID(), BigDecimal.valueOf(800), false));
+        when(userService.getCurrentUser()).thenReturn(user);
+        when(categoryService.getCategoriesByUserId(userId)).thenReturn(categories);
+
+        try (MockedStatic<ConsoleReader> mockedReader = mockStatic(ConsoleReader.class)) {
+            mockedReader.when(() -> ConsoleReader.readInt("Категория", 1, categories.size())).thenReturn(1);
+            mockedReader.when(() -> ConsoleReader.readString("Название")).thenReturn("Продукты");
+            mockedReader.when(() -> ConsoleReader.readBoolean("Режим только пополнения?", categories.get(0).getIsDepositOnly())).thenReturn(true);
+            mockedReader.when(() -> ConsoleReader.readInt("Бюджет")).thenReturn(2000);
+
+            categoryController.handleCommand(List.of("edit"));
+
+            ArgumentCaptor<EditCategory> dtoCaptor = ArgumentCaptor.forClass(EditCategory.class);
+            verify(categoryService, times(1)).update(dtoCaptor.capture());
+
+            EditCategory dto = dtoCaptor.getValue();
+            assertEquals(categories.get(0).getId(), dto.categoryId());
+            assertEquals("Продукты", dto.name());
+            assertEquals(BigDecimal.valueOf(2000), dto.budget());
+            assertTrue(dto.isDepositOnly());
+
+            verify(view, times(1)).printEditHeader();
+            verify(view, times(1)).printCategoryList(categories);
+            verify(view, times(1)).updateSuccess("Продукты");
         }
     }
 

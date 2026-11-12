@@ -6,10 +6,10 @@ import java.util.UUID;
 
 public class Category {
     private final UUID id;
-    private final String name;
+    private String name;
     private final UUID walletId;
-    private final BigDecimal budget;
-    private final boolean isDepositOnly;
+    private BigDecimal budget;
+    private boolean isDepositOnly;
 
     public Category(String name, UUID walletId, BigDecimal budget, boolean isDepositOnly) {
         this.id = UUID.randomUUID();
@@ -45,5 +45,21 @@ public class Category {
 
     public boolean getIsDepositOnly() {
         return isDepositOnly;
+    }
+
+    public void setName(String name) {
+        if (!name.isBlank()) {
+            this.name = name;
+        }
+    }
+
+    public void setBudget(BigDecimal budget) {
+        if (budget != null) {
+            this.budget = budget;
+        }
+    }
+
+    public void setIsDepositOnly(boolean isDepositOnly) {
+        this.isDepositOnly = isDepositOnly;
     }
 }
