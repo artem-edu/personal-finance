@@ -87,6 +87,46 @@ graph TD
 
 ```
 
+### 3. Связи моделей
+
+```mermaid
+classDiagram
+    class User {
+        +UUID id
+        +string login
+        +string passwordHash
+    }
+
+    class Wallet {
+        +UUID id
+        +UUID userId
+        +BigDecimal balance
+    }
+
+    class Category {
+        +UUID id
+        +string name
+        +UUID walletId
+        +BigDecimal budget
+        +boolean isDepositOnly
+    }
+
+    class Transaction {
+        +UUID id
+        +UUID categoryId
+        +UUID walletId
+        +TransactionType type
+        +BigDecimal amount
+        +long createdAt
+    }
+
+    Wallet "0..*" --> "1" User : userId
+    Category "0..*" --> "1" Wallet : walletId
+    Transaction "0..*" --> "1" Category : categoryId
+    Transaction "0..*" --> "1" Wallet : walletId
+
+```
+
 ---
 
 ## Структура пакетов проекта
