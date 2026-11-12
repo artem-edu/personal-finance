@@ -1,7 +1,6 @@
 package mephi;
 
 import mephi.core.AppBootstrap;
-import mephi.exception.PersonalFinanceException;
 import mephi.util.ConsoleReader;
 import mephi.core.Router;
 
@@ -17,7 +16,7 @@ public class Main {
             }
             try {
                 router.route(tokens);
-            } catch (PersonalFinanceException e) {
+            } catch (Exception e) {
                 System.out.println(e.getMessage());
             }
         }
